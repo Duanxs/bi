@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Unocss from 'unocss/vite'
+import Inspect from 'vite-plugin-inspect'
 import AutoImport from 'unplugin-auto-import/vite'
 import Componets from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -10,7 +11,9 @@ export default defineConfig({
   plugins: [
     vue(),
     Unocss(),
+    Inspect(),
     AutoImport({
+      dts: 'src/auto-imports.d.ts',
       imports: [
         'vue',
         'vue-router',
@@ -18,7 +21,7 @@ export default defineConfig({
         '@vueuse/core',
       ],
       dirs: [
-        'src/composables',
+        'src/composables/**',
       ],
       vueTemplate: true,
       resolvers: [
@@ -27,7 +30,7 @@ export default defineConfig({
     }),
     Componets({
       extensions: ['vue'],
-      dts: true,
+      dts: 'src/components.d.ts',
       resolvers: [
         ElementPlusResolver(),
       ],
