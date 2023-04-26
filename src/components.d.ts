@@ -10,7 +10,16 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BaseChart: typeof import('./components/charts/BaseChart.vue')['default']
+    ChartTypeItem: typeof import('./components/widgets/ChartTypeItem.vue')['default']
+    ChartTypeList: typeof import('./components/widgets/ChartTypeList.vue')['default']
+    copy: typeof import('./components/widgets/Field copy.vue')['default']
+    ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
+    Field: typeof import('./components/widgets/Field.vue')['default']
+    FieldExpand: typeof import('./components/widgets/FieldExpand.vue')['default']
+    FieldTitle: typeof import('./components/widgets/FieldTitle.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    IIconParkOutlineText: typeof import('~icons/icon-park-outline/text')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

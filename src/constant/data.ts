@@ -1,4 +1,4 @@
-export const data = {
+export const tableData = {
   fields: [
     {
       id: 'INSIDE[5f]TABLE[5f]NAME_[65f6][95f4]',
