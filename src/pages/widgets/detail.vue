@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { tableData } from '@/constant/data'
-import { tableType } from '@/constant/tableType'
+import { tableType } from '@/constant/chartType'
 
 // 左侧字段展示区
 const tableTitle = ref('空调零售明细表')
@@ -40,7 +40,7 @@ const currentChart = ref(tableType[0])
         <ChartTypeList v-model:chart="currentChart" :list="tableType" />
       </div>
       <div class="chart-setting" px-16px>
-        图表配置
+        <ChartSettingTabs :chart="currentChart" />
       </div>
       <div class="result-filter" px-16px>
         结果过滤
