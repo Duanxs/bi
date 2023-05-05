@@ -31,6 +31,7 @@ export default defineConfig({
       dirs: [
         'src/composables/**',
         'src/enums/**',
+        'src/stores/**',
       ],
       vueTemplate: true,
       resolvers: [

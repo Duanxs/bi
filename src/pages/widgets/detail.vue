@@ -12,6 +12,8 @@ const numberFields = computed(() => fields.value.filter(field => field.type === 
 // 中间图表信息区
 // const [isTableChecked] = useToggle(false)
 const currentChart = ref(tableType[0])
+
+const drag = useDragStore()
 </script>
 
 <template>
@@ -24,12 +26,12 @@ const currentChart = ref(tableType[0])
         <div class="table-field">
           <div class="string-fields" mb-5px>
             <template v-for="field in textFields" :key="field.id">
-              <Field ml-12px :name="field.name" :type="field.type" />
+              <Field :field-id="field.id" ml-12px :name="field.name" :type="field.type" />
             </template>
           </div>
           <div class="number-fields">
             <template v-for="field in numberFields" :key="field.id">
-              <Field ml-12px :name="field.name" :type="field.type" />
+              <Field :field-id="field.id" ml-12px :name="field.name" :type="field.type" />
             </template>
           </div>
         </div>
@@ -40,7 +42,7 @@ const currentChart = ref(tableType[0])
         <ChartTypeList v-model:chart="currentChart" :list="tableType" />
       </div>
       <div class="chart-setting" px-16px>
-        <ChartSettingTabs :chart="currentChart" />
+        <ChartSettingTabs :dragging="drag.isDragging" :chart="currentChart" />
       </div>
       <div class="result-filter" px-16px>
         结果过滤

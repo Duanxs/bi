@@ -1,4 +1,5 @@
 import { chartAttrMap } from '@/constant/chartTypeAttr'
+import { tableData } from '@/constant/data'
 
 export function useChartPropsList(chartType: string) {
   switch (chartType) {
@@ -70,4 +71,15 @@ export function useChartPropsList(chartType: string) {
     default:
       return ''
   }
+}
+
+export interface TableField {
+  id: string
+  name: string
+  type: number
+}
+
+export function getChartAttrById(id: string) {
+  const field = tableData.fields.find(field => field.id === id)
+  return field as TableField
 }

@@ -2,6 +2,7 @@
 import type { ChartTypeItem } from '@/constant/chartType'
 
 defineProps<{
+  dragging: boolean
   chart: ChartTypeItem
 }>()
 
@@ -15,6 +16,7 @@ const activeTab = ref<'基础配置' | '组件样式'>('基础配置')
         <ChartSettingPropItem
           v-for="item in chart.attrs"
           :key="item.label"
+          :dragging="dragging"
           :attrs="item"
         />
       </ElTabPane>

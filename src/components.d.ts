@@ -18,6 +18,7 @@ declare module '@vue/runtime-core' {
     ChartTypeList: typeof import('./components/widgets/ChartTypeList.vue')['default']
     ChartTypePropTabs: typeof import('./components/widgets/ChartTypePropTabs.vue')['default']
     copy: typeof import('./components/widgets/Field copy.vue')['default']
+    Drager: typeof import('./components/Drager.vue')['default']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
