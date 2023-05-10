@@ -43,7 +43,7 @@ function onDragStart(e: DragEvent) {
     <Drager
       v-model:dragging="drag.isDragging"
       :class="{ 'drag-start': drag.isDragging, active }"
-      px-8px leading-20px cursor-pointer w-full
+      px-8px leading-20px cursor-pointer flex-1 min-w-fit
       hover:bg-hex-def2f0
       rounded="tl-6px br-6px"
       flex items-center
@@ -70,7 +70,7 @@ function onDragStart(e: DragEvent) {
   width: 100px;
 } */
 .drag-start> *:last-child {
-  /* opacity: 0; */
-  display: none;
+  opacity: 0;
+  /* display: none; */
 }
 </style>

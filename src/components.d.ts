@@ -26,6 +26,7 @@ declare module '@vue/runtime-core' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     Field: typeof import('./components/widgets/Field.vue')['default']
+    FieldDragBox: typeof import('./components/widgets/FieldDragBox.vue')['default']
     FieldExpand: typeof import('./components/widgets/FieldExpand.vue')['default']
     FieldTitle: typeof import('./components/widgets/FieldTitle.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']

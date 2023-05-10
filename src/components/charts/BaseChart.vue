@@ -13,7 +13,9 @@ const props = withDefaults(defineProps<{
   height: '100%',
 })
 const echartRef = ref<HTMLElement | null>(null)
-const echartInstance: Ref<ECharts | null> = ref(null)
+// ref 更改大小会报错
+// https://github.com/apache/echarts/issues/14974#issuecomment-842812114
+const echartInstance = shallowRef<ECharts | null>(null)
 
 function initChart() {
   echartInstance.value = echartsInit(echartRef.value!, 'light', {

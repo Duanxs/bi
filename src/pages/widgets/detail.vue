@@ -14,6 +14,8 @@ const numberFields = computed(() => fields.value.filter(field => field.type === 
 const currentChart = ref(tableType[0])
 
 const drag = useDragStore()
+
+const chartOption = genChartOptions()
 </script>
 
 <template>
@@ -48,8 +50,49 @@ const drag = useDragStore()
         结果过滤
       </div>
     </div>
-    <div class="widget-chart" flex-1>
-      图表
+    <div class="widget-chart" flex-1 p-16px flex flex-col>
+      <div relative>
+        <div class="x-axis">
+          <FieldDragBox
+            :dragging="drag.isDragging"
+            :gap="2"
+            active multiple vertical
+          >
+            <template #prefix>
+              横轴
+            </template>
+            <template #suffix>
+              clear
+            </template>
+          </FieldDragBox>
+        </div>
+        <div class="y-axis">
+          <FieldDragBox
+            :dragging="drag.isDragging"
+            active multiple vertical
+            :gap="2"
+          >
+            <template #prefix>
+              纵轴
+            </template>
+            <template #suffix>
+              clear
+            </template>
+          </FieldDragBox>
+        </div>
+        <div
+          class="exchange"
+          absolute top="50%" left-12px translate-y="-50%"
+          w-24px h-24px bg="#2c60db0d" z-1 rounded-full
+          flex justify-center items-center
+          cursor-pointer
+        >
+          <div i-icon-park-outline-sort-two text-14px />
+        </div>
+      </div>
+      <div flex-1>
+        <BaseChart :option="chartOption" />
+      </div>
     </div>
   </div>
 </template>

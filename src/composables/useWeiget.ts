@@ -1,3 +1,4 @@
+import type { EChartsOption } from 'echarts'
 import { chartAttrMap } from '@/constant/chartTypeAttr'
 import { tableData } from '@/constant/data'
 
@@ -82,4 +83,72 @@ export interface TableField {
 export function getChartAttrById(id: string) {
   const field = tableData.fields.find(field => field.id === id)
   return field as TableField
+}
+
+export function genChartOptions(): Ref<EChartsOption> {
+  const index = tableData.fields.findIndex(field => field.name === '分级市场')
+  const index2 = tableData.fields.findIndex(field => field.name === '销售量')
+  const data = tableData.data
+  const fieldsSet = new Set(data.map(item => item[index]))
+
+  // [
+  //   ['一级市场', '7593'],
+  //   ['二级市场', '2914'],
+  //   ['三级市场', '1296'],
+  //   ['四级市场', '2999'],
+  // ]
+  const fieldObj: any = {}
+  fieldsSet.forEach((item) => {
+    fieldObj[item] = 0
+  })
+  data.forEach((item) => {
+    fieldObj[item[index]] += +item[index2]
+  })
+  const dataset = []
+  for (const key in fieldObj) {
+    dataset.push([key, fieldObj[key]])
+  }
+  // console.log('dataset ~ dataset:', dataset)
+  const options = ref<EChartsOption>(
+    {
+      legend: {},
+      tooltip: {},
+      dataset: {
+        // 提供一份数据。
+        dimensions: Array.from(fieldsSet),
+        source: dataset,
+      },
+      xAxis: {
+        type: 'category',
+        name: '分级市场',
+        nameLocation: 'middle',
+        nameGap: 30,
+        axisLabel: {
+          backgroundColor: '#333',
+          width: 100,
+          height: 22,
+          lineHeight: 22,
+          margin: 0,
+        },
+        axisTick: {
+          show: false,
+        },
+      },
+      // 声明一个 Y 轴，数值轴。
+      yAxis: {},
+      // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
+      series: [
+        {
+          type: 'bar',
+          encode: {
+            x: '分级市场',
+            y: '销售量',
+          },
+          // seriesLayoutBy: 'row',
+        },
+      ],
+    },
+  ) as Ref<EChartsOption>
+
+  return options
 }
