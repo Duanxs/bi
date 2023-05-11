@@ -59,7 +59,7 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
             id="x"
             :dragging="drag.isDragging"
             :gap="2"
-            active multiple vertical
+            active multiple horizontal
             @add="(e) => addChartAxisBy(e, 10000)"
             @del="(e) => delChartAxisBy(e, 10000)"
           >
@@ -75,7 +75,7 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
           <FieldDragBox
             id="y"
             :dragging="drag.isDragging"
-            active multiple vertical
+            active multiple horizontal
             :gap="2"
             @add="(e) => addChartAxisBy(e, 30000)"
             @del="(e) => delChartAxisBy(e, 30000)"

@@ -2,11 +2,12 @@
 // interface ChartAttr {
 //   [`${CHART_ATTRS}`]: ChartAttrItem
 // }
+import type { I图表属性名 } from './chartTypeAttrSetting'
 import { 图表属性名, 图表属性配置 } from './chartTypeAttrSetting'
 import { CHART_ATTRS } from '@/enums/chartTypes'
 
 export interface ChartAttrItem {
-  label: string
+  label: I图表属性名
   component: string | null
   multiple: boolean
   setting: typeof 图表属性配置[keyof typeof 图表属性配置]

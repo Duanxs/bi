@@ -1,6 +1,7 @@
 import type { ChartAttrMap } from './types'
 import type { Axis, Widget } from '@/composables/types'
 import type { TableField } from '@/composables/useWeiget'
+import type { I图表属性名 } from '@/constant/chartTypeAttrSetting'
 
 export const useWidgetStore = defineStore('widget', () => {
   const config = ref<Widget>({
@@ -376,29 +377,50 @@ export const useWidgetStore = defineStore('widget', () => {
     entire: getChartAttrSetting(),
   })
 
-  function addChartAxisBy(field: TableField, axis: Axis) {
+  function appendDimension(field: TableField) {
     const dim = genDimension(field)
     config.value.dimensions[dim.id!] = dim
-    config.value.view[axis] = [...config.value.view[axis], dim.id!]
+    return dim.id!
+  }
+  function getDimensionById(id: number) {
+    return config.value.dimensions[id]
+  }
+
+  function addChartAxisBy(field: TableField, axis: Axis) {
+    const id = appendDimension(field)
+    config.value.view[axis] = [...config.value.view[axis], id]
 
     // y 轴额外处理
     if (axis === AXIS_ENUM.y) {
       const emptySetting = getChartAttrSetting()
-      chartAttr.value[dim.id!] = emptySetting
+      chartAttr.value[id] = emptySetting
     }
   }
 
   function delChartAxisBy(index: number, axis: Axis) {
-    const dimId = config.value.view[axis][index]
+    const dimId = config.value.view[axis].splice(index, 1)[0]
     delete config.value.dimensions[dimId]
-    config.value.view[axis].splice(index, 1)
+    delete chartAttr.value[dimId]
+  }
+
+  function addChartDimensionBy(field: TableField, attr: I图表属性名) {
+    const id = appendDimension(field)
+    chartAttr.value.entire[attr].dimensionIds.push(id)
+  }
+
+  function delChartDimensionBy(index: number, attr: I图表属性名) {
+    const dimId = chartAttr.value.entire[attr].dimensionIds.splice(index, 1)[0]
+    delete config.value.dimensions[dimId]
     delete chartAttr.value[dimId]
   }
 
   return {
     config,
     chartAttr,
+    getDimensionById,
     addChartAxisBy,
     delChartAxisBy,
+    addChartDimensionBy,
+    delChartDimensionBy,
   }
 })

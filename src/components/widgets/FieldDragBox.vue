@@ -24,6 +24,8 @@ const emits = defineEmits<{
   (event: 'del', index: number): void
 }>()
 
+const displayStyle = computed(() => props.horizontal ? 'flex' : 'block')
+
 const isMultiple = computed(() => props.multiple)
 
 const dropBox = ref<HTMLElement | null>(null)
@@ -143,6 +145,6 @@ function onFieldDragEnd(_e: DragEvent, id: string, index: number) {
 }
 
 .field-box {
-  display: flex;
+  display: v-bind(displayStyle);
 }
 </style>
