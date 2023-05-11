@@ -2,16 +2,20 @@
 import type { TableField } from '@/composables/useWeiget'
 
 const props = withDefaults(defineProps<{
+  id: string
   dragging: boolean
   multiple?: boolean
   horizontal?: boolean
   vertical?: boolean
+  unique?: boolean
   gap?: number
 }>(), {
+  id: '',
   dragging: false,
   multiple: false,
   horizontal: false,
   vertical: false,
+  unique: false,
   gap: 0,
 })
 
@@ -28,11 +32,17 @@ const { isOutside } = useMouseInElement(dropBox)
 const idSet = new Set()
 const currentFields = ref<TableField[]>([])
 const isEmpty = computed(() => !currentFields.value.length)
+let saveKey = ''
 function onDrop(e: DragEvent) {
+  // 自己拖入自己，不能添加
+  if (saveKey === props.id) {
+    saveKey = ''
+    return
+  }
   e.preventDefault()
   e.stopPropagation()
   const id = e.dataTransfer?.getData('text/plain')
-  if (!id || idSet.has(id))
+  if (!id || (props.unique && idSet.has(id)))
     return
 
   if (!isMultiple.value && !isEmpty.value) {
@@ -40,23 +50,20 @@ function onDrop(e: DragEvent) {
     idSet.clear()
   }
 
-  idSet.add(id)
+  props.unique && idSet.add(id)
   const field = getChartAttrById(id)
   currentFields.value.push(field)
   emits('add', field)
 }
-function onFieldDragEnd(_e: DragEvent, id: string) {
+
+function onFieldDragStart(_e: DragEvent) {
+  saveKey = props.id
+}
+function onFieldDragEnd(_e: DragEvent, id: string, index: number) {
   if (isOutside.value) {
-    let i = 0
-    currentFields.value = currentFields.value.filter((field, index) => {
-      if (field.id !== id) {
-        return true
-      }
-      i = index
-      return false
-    })
-    idSet.delete(id)
-    emits('del', i)
+    currentFields.value.splice(index, 1)
+    props.unique && idSet.delete(id)
+    emits('del', index)
   }
 }
 </script>
@@ -83,7 +90,7 @@ function onFieldDragEnd(_e: DragEvent, id: string) {
       <slot name="prefix" />
     </div>
     <div class="field-box" flex-1 min-h-36px p-6px bg-hex-f8f9fc>
-      <template v-for="field in currentFields" :key="field.id">
+      <template v-for="(field, index) in currentFields" :key="field.id">
         <Field
           :field-id="field.id"
           :name="field.name"
@@ -91,7 +98,8 @@ function onFieldDragEnd(_e: DragEvent, id: string) {
           active hide-icon
           min-w-fit
           mr-6px
-          @end="onFieldDragEnd"
+          @start="(e) => onFieldDragStart(e)"
+          @end="(e, id) => onFieldDragEnd(e, id, index)"
         />
       </template>
       <div v-if="!isOutside && dragging && (isMultiple || isEmpty)" pr-16px>

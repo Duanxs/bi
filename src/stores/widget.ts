@@ -392,11 +392,7 @@ export const useWidgetStore = defineStore('widget', () => {
     const dimId = config.value.view[axis][index]
     delete config.value.dimensions[dimId]
     config.value.view[axis].splice(index, 1)
-
-    // y 轴额外处理
-    if (axis === AXIS_ENUM.y) {
-      delete chartAttr.value[dimId]
-    }
+    delete chartAttr.value[dimId]
   }
 
   return {

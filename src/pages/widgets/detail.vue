@@ -56,6 +56,7 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
       <div relative>
         <div class="x-axis">
           <FieldDragBox
+            id="x"
             :dragging="drag.isDragging"
             :gap="2"
             active multiple vertical
@@ -72,6 +73,7 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
         </div>
         <div class="y-axis">
           <FieldDragBox
+            id="y"
             :dragging="drag.isDragging"
             active multiple vertical
             :gap="2"
