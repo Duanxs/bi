@@ -15,6 +15,11 @@ const props = withDefaults(defineProps<{
   gap: 0,
 })
 
+const emits = defineEmits<{
+  (event: 'add', fields: TableField): void
+  (event: 'del', index: number): void
+}>()
+
 const isMultiple = computed(() => props.multiple)
 
 const dropBox = ref<HTMLElement | null>(null)
@@ -36,14 +41,22 @@ function onDrop(e: DragEvent) {
   }
 
   idSet.add(id)
-  currentFields.value.push(getChartAttrById(id))
+  const field = getChartAttrById(id)
+  currentFields.value.push(field)
+  emits('add', field)
 }
 function onFieldDragEnd(_e: DragEvent, id: string) {
   if (isOutside.value) {
-    currentFields.value = currentFields.value.filter((field) => {
-      return field.id !== id
+    let i = 0
+    currentFields.value = currentFields.value.filter((field, index) => {
+      if (field.id !== id) {
+        return true
+      }
+      i = index
+      return false
     })
     idSet.delete(id)
+    emits('del', i)
   }
 }
 </script>

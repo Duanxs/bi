@@ -16,6 +16,8 @@ const currentChart = ref(tableType[0])
 const drag = useDragStore()
 
 const chartOption = genChartOptions()
+
+const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
 </script>
 
 <template>
@@ -57,6 +59,8 @@ const chartOption = genChartOptions()
             :dragging="drag.isDragging"
             :gap="2"
             active multiple vertical
+            @add="(e) => addChartAxisBy(e, 10000)"
+            @del="(e) => delChartAxisBy(e, 10000)"
           >
             <template #prefix>
               横轴
@@ -71,6 +75,8 @@ const chartOption = genChartOptions()
             :dragging="drag.isDragging"
             active multiple vertical
             :gap="2"
+            @add="(e) => addChartAxisBy(e, 30000)"
+            @del="(e) => delChartAxisBy(e, 30000)"
           >
             <template #prefix>
               纵轴

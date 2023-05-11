@@ -32,6 +32,8 @@ export default defineConfig({
         'src/composables/**',
         'src/enums/**',
         'src/stores/**',
+        'src/shared/**',
+        'src/constant/**',
       ],
       vueTemplate: true,
       resolvers: [
