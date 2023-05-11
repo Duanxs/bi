@@ -4,7 +4,6 @@ import { tableType } from '@/constant/chartType'
 
 // 左侧字段展示区
 const tableTitle = ref('空调零售明细表')
-const [isExpand] = useToggle(true)
 const fields = ref(tableData.fields)
 const textFields = computed(() => fields.value.filter(field => field.type === COLUMN.STRING || field.type === COLUMN.DATE))
 const numberFields = computed(() => fields.value.filter(field => field.type === COLUMN.NUMBER))
@@ -26,7 +25,7 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
       <div class="data-header">
         header
       </div>
-      <FieldExpand v-model:expand="isExpand" :name="tableTitle">
+      <FieldExpand expand :name="tableTitle">
         <div class="table-field">
           <div class="string-fields" mb-5px>
             <template v-for="field in textFields" :key="field.id">

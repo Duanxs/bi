@@ -4,12 +4,17 @@ import { CaretBottom, CaretRight } from '@element-plus/icons-vue'
 
 const props = withDefaults(defineProps<{
   name: string
-  expand: boolean
+  expand?: boolean
 }>(), {
-  expand: true,
 })
-const emits = defineEmits(['update:expand'])
-const isShow = useVModel(props, 'expand', emits)
+const emits = defineEmits<{
+  (event: 'change', isExpand: boolean): void
+}>()
+const isShow = ref(props.expand ?? true)
+function onClick() {
+  isShow.value = !isShow.value
+  emits('change', isShow.value)
+}
 </script>
 
 <template>
@@ -19,10 +24,10 @@ const isShow = useVModel(props, 'expand', emits)
       text-12px font-bold cursor-pointer
       hover:bg-hex-eef1f6
       rounded-2px
-      @click="isShow = !isShow"
+      @click="onClick"
     >
       <ElIcon class="icon">
-        <CaretBottom v-if="expand" />
+        <CaretBottom v-if="isShow" />
         <CaretRight v-else />
       </ElIcon>
       <div
@@ -32,7 +37,8 @@ const isShow = useVModel(props, 'expand', emits)
         {{ name }}
       </div>
     </div>
-    <div v-show="expand">
+    {{ isShow }}
+    <div v-show="isShow">
       <slot />
     </div>
   </div>
