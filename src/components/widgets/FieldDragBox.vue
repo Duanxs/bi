@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import type { TableField } from '@/composables/useWeiget'
+import type { DimensionValue } from '@/composables/types'
 
 const props = withDefaults(defineProps<{
-  id: string
+  name: string
   dragging: boolean
   multiple?: boolean
   horizontal?: boolean
   vertical?: boolean
   unique?: boolean
   gap?: number
+  fields: DimensionValue[]
 }>(), {
-  id: '',
+  name: '',
   dragging: false,
   multiple: false,
   horizontal: false,
@@ -20,7 +21,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emits = defineEmits<{
-  (event: 'add', fields: TableField): void
+  (event: 'add', field: DimensionValue): void
   (event: 'del', index: number): void
 }>()
 
@@ -32,12 +33,14 @@ const dropBox = ref<HTMLElement | null>(null)
 const { isOutside } = useMouseInElement(dropBox)
 
 const idSet = new Set()
-const currentFields = ref<TableField[]>([])
+// const currentFields = ref<TableField[]>([])
+const currentFields = computed(() => props.fields)
+
 const isEmpty = computed(() => !currentFields.value.length)
 let saveKey = ''
 function onDrop(e: DragEvent) {
   // 自己拖入自己，不能添加
-  if (saveKey === props.id) {
+  if (saveKey === props.name) {
     saveKey = ''
     return
   }
@@ -48,22 +51,23 @@ function onDrop(e: DragEvent) {
     return
 
   if (!isMultiple.value && !isEmpty.value) {
-    currentFields.value = []
+    // currentFields.value = []
+    emits('del', 0)
     idSet.clear()
   }
 
   props.unique && idSet.add(id)
   const field = getChartAttrById(id)
-  currentFields.value.push(field)
+  // currentFields.value.push(field)
   emits('add', field)
 }
 
 function onFieldDragStart(_e: DragEvent) {
-  saveKey = props.id
+  saveKey = props.name
 }
 function onFieldDragEnd(_e: DragEvent, id: string, index: number) {
   if (isOutside.value) {
-    currentFields.value.splice(index, 1)
+    // currentFields.value.splice(index, 1)
     props.unique && idSet.delete(id)
     emits('del', index)
   }
@@ -94,9 +98,9 @@ function onFieldDragEnd(_e: DragEvent, id: string, index: number) {
     <div class="field-box" flex-1 min-h-36px p-6px bg-hex-f8f9fc>
       <template v-for="(field, index) in currentFields" :key="field.id">
         <Field
-          :field-id="field.id"
-          :name="field.name"
-          :type="field.type"
+          :field-id="field.fieldId!"
+          :name="field.name!"
+          :type="field.type!"
           active hide-icon
           min-w-fit
           mr-6px

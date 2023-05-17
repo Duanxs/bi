@@ -1,26 +1,31 @@
 <script lang="ts" setup>
-import type { TableField } from '@/composables/useWeiget'
+import type { DimensionValue } from '@/composables/types'
 import type { ChartAttrItem } from '@/constant/chartTypeAttr'
 
 const props = defineProps<{
+  y: string
   dragging: boolean
   attrs: ChartAttrItem
 }>()
 
 const widgetStore = useWidgetStore()
-function addChartAttrBy(field: TableField) {
-  widgetStore.addChartDimensionBy(field, props.attrs.label)
+
+const fields = computed(() => widgetStore.getDimensionsFromChartAttr(props.y, props.attrs.label))
+
+function addChartAttrBy(field: DimensionValue) {
+  widgetStore.addChartDimensionBy(field, props.attrs.label, props.y)
 }
 function delChartAttrBy(index: number) {
-  widgetStore.delChartDimensionBy(index, props.attrs.label)
+  widgetStore.delChartDimensionBy(index, props.attrs.label, props.y)
 }
 </script>
 
 <template>
   <FieldDragBox
-    :id="attrs.label"
+    :name="attrs.label"
     :dragging="dragging"
     :multiple="attrs.multiple"
+    :fields="fields"
     active vertical
     @add="(e) => addChartAttrBy(e)"
     @del="(e) => delChartAttrBy(e)"

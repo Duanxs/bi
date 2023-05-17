@@ -1,11 +1,13 @@
-export type Axis = 10000 | 20000 | 30000
+import type { AXIS_TYPES } from '@/enums/chartTypes'
+
+export type Axis = `${AXIS_TYPES}`
 export interface Dimension {
   [key: string]: DimensionValue
 }
 
 export interface DimensionValue {
   id: string | null
-  type: string | null
+  type: number | null
   fieldId: string | null
   name: string | null
   group: {
@@ -196,11 +198,7 @@ export interface Widget {
     transmitLinkages: true
     chartInitState: {}
   }
-  view: {
-    10000: string[]
-    20000: string[]
-    30000: string[]
-  }
+  view: Record<Axis, string[]>
   viewAttr: {
     10000: {
       type: number

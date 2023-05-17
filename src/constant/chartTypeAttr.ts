@@ -115,7 +115,7 @@ export function getChartAttrSetting() {
     if (!chartAttr[attr]) {
       console.warn(`chartAttr[${attr}] is not defined`)
     }
-    setting[attr] = chartAttr[attr].setting
+    setting[attr] = JSON.parse(JSON.stringify(chartAttr[attr].setting))
   })
   return setting
 }

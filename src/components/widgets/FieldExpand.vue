@@ -37,7 +37,6 @@ function onClick() {
         {{ name }}
       </div>
     </div>
-    {{ isShow }}
     <div v-show="isShow">
       <slot />
     </div>

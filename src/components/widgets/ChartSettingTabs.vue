@@ -7,18 +7,39 @@ defineProps<{
 }>()
 
 const activeTab = ref<'基础配置' | '组件样式'>('基础配置')
+
+const widgetStore = useWidgetStore()
+const yAxisAttrs = computed(() => [
+  { name: '全部', id: 'entire' },
+  ...widgetStore.yAxisInfos])
+
+const isMultipleY = computed(() => widgetStore.isMultipleY)
 </script>
 
 <template>
   <div class="chart-prop-tabs">
     <ElTabs v-model="activeTab" stretch>
       <ElTabPane label="图形属性" name="基础配置">
-        <ChartSettingPropItem
-          v-for="item in chart.attrs"
-          :key="item.label"
-          :dragging="dragging"
-          :attrs="item"
-        />
+        <template v-if="!isMultipleY">
+          <ChartSettingPropItem
+            v-for="item in chart.attrs"
+            :key="item.label"
+            :dragging="dragging"
+            :attrs="item"
+            y="entire"
+          />
+        </template>
+        <template v-for="(y, index) in yAxisAttrs" v-else :key="y.id">
+          <FieldExpand :name="y.name!" :expand="index === 0">
+            <ChartSettingPropItem
+              v-for="item in chart.attrs"
+              :key="item.label"
+              :dragging="dragging"
+              :attrs="item"
+              :y="y.id!"
+            />
+          </FieldExpand>
+        </template>
       </ElTabPane>
       <ElTabPane label="组件样式" name="组件样式">
         <ChartSettingStyle />

@@ -16,7 +16,9 @@ const drag = useDragStore()
 
 const chartOption = genChartOptions()
 
-const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
+const { addChartAxisBy, delChartAxisBy, getDimensionsFromAxis } = useWidgetStore()
+const fieldsX = computed(() => getDimensionsFromAxis(AXIS_TYPES.x))
+const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
 </script>
 
 <template>
@@ -40,11 +42,11 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
         </div>
       </FieldExpand>
     </div>
-    <div class="widget-chart-info" b-r w-245px py-16px>
+    <div class="widget-chart-info" flex="~ col" b-r w-245px h-full py-16px>
       <div class="chart-type">
         <ChartTypeList v-model:chart="currentChart" :list="tableType" />
       </div>
-      <div class="chart-setting" px-16px>
+      <div class="chart-setting" flex-1 of-auto px-16px>
         <ChartSettingTabs :dragging="drag.isDragging" :chart="currentChart" />
       </div>
       <div class="result-filter" px-16px>
@@ -55,12 +57,13 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
       <div relative>
         <div class="x-axis">
           <FieldDragBox
-            id="x"
+            name="x"
+            :fields="fieldsX"
             :dragging="drag.isDragging"
             :gap="2"
             active multiple horizontal
-            @add="(e) => addChartAxisBy(e, 10000)"
-            @del="(e) => delChartAxisBy(e, 10000)"
+            @add="(e) => addChartAxisBy(e, AXIS_TYPES.x)"
+            @del="(e) => delChartAxisBy(e, AXIS_TYPES.x)"
           >
             <template #prefix>
               横轴
@@ -72,12 +75,13 @@ const { addChartAxisBy, delChartAxisBy } = useWidgetStore()
         </div>
         <div class="y-axis">
           <FieldDragBox
-            id="y"
+            name="y"
+            :fields="fieldsY"
             :dragging="drag.isDragging"
             active multiple horizontal
             :gap="2"
-            @add="(e) => addChartAxisBy(e, 30000)"
-            @del="(e) => delChartAxisBy(e, 30000)"
+            @add="(e) => addChartAxisBy(e, AXIS_TYPES.y)"
+            @del="(e) => delChartAxisBy(e, AXIS_TYPES.y)"
           >
             <template #prefix>
               纵轴

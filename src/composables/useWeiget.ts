@@ -1,4 +1,5 @@
 import type { EChartsOption } from 'echarts'
+import type { DimensionValue } from './types'
 import { chartAttrMap } from '@/constant/chartTypeAttr'
 import { tableData } from '@/constant/data'
 
@@ -82,7 +83,7 @@ export interface TableField {
 
 export function getChartAttrById(id: string) {
   const field = tableData.fields.find(field => field.id === id)
-  return field as TableField
+  return field as unknown as DimensionValue
 }
 
 export function genChartOptions(): Ref<EChartsOption> {

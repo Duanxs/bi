@@ -1,5 +1,4 @@
 import type { DimensionValue } from './types'
-import type { TableField } from './useWeiget'
 
 // const emptyWidgetConfig = {
 //   type: 1,
@@ -232,11 +231,20 @@ const emptyWidgetDimensionConfig: DimensionValue = {
   used: true,
 }
 
-export function genDimension(field: TableField): DimensionValue {
+export function genDimension(field: DimensionValue): DimensionValue {
   return {
     ...emptyWidgetDimensionConfig,
     id: genId(),
     name: field.name,
     fieldId: field.id,
+  }
+}
+
+export function genDimensionByAnother(field: DimensionValue): DimensionValue {
+  return {
+    ...emptyWidgetDimensionConfig,
+    id: genId(),
+    name: field.name,
+    fieldId: field.fieldId,
   }
 }

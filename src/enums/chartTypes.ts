@@ -49,3 +49,9 @@ export enum CHART_ATTRS {
   桑基起点 = '起点',
   桑基终点 = '终点',
 }
+
+export enum AXIS_TYPES {
+  x = '10000',
+  z = '20000',
+  y = '30000',
+}

@@ -1,7 +1,7 @@
 import type { ChartAttrMap } from './types'
-import type { Axis, Widget } from '@/composables/types'
-import type { TableField } from '@/composables/useWeiget'
+import type { Axis, DimensionValue, Widget } from '@/composables/types'
 import type { I图表属性名 } from '@/constant/chartTypeAttrSetting'
+import { 图表属性名 } from '@/constant/chartTypeAttrSetting'
 
 export const useWidgetStore = defineStore('widget', () => {
   const config = ref<Widget>({
@@ -377,23 +377,72 @@ export const useWidgetStore = defineStore('widget', () => {
     entire: getChartAttrSetting(),
   })
 
-  function appendDimension(field: TableField) {
+  const yAxisInfos = computed(() => {
+    return config.value.view[AXIS_TYPES.y].map((id) => {
+      return getDimensionById(id)
+    })
+  })
+
+  const isMultipleY = computed(() => yAxisInfos.value.length > 1)
+  const entireDimCount = ref(0)
+  const isEntireDimEmpty = computed(() => entireDimCount.value === 0)
+
+  function appendDimension(field: DimensionValue) {
     const dim = genDimension(field)
     config.value.dimensions[dim.id!] = dim
     return dim.id!
   }
-  function getDimensionById(id: number) {
+  function appendDimensionByAnother(field: DimensionValue) {
+    const dim = genDimensionByAnother(field)
+    config.value.dimensions[dim.id!] = dim
+    return dim.id!
+  }
+  function getDimensionById(id: string) {
     return config.value.dimensions[id]
   }
 
-  function addChartAxisBy(field: TableField, axis: Axis) {
+  function getDimensionsFromChartAttr(id: string, attr: I图表属性名) {
+    return chartAttr.value[id][attr].dimensionIds.map((id) => {
+      return getDimensionById(id)
+    })
+  }
+
+  function getDimensionsFromAxis(axis: Axis) {
+    return config.value.view[axis].map((id) => {
+      return getDimensionById(id)
+    })
+  }
+
+  function _addDimension(field: DimensionValue, attr: I图表属性名) {
+    yAxisInfos.value.forEach((yAxis) => {
+      const id = appendDimension(field)
+      chartAttr.value[yAxis.id!][attr].dimensionIds.push(id)
+    })
+  }
+
+  function _getAttrDimensionIds(id: string, attr: I图表属性名) {
+    return chartAttr.value[id][attr].dimensionIds
+  }
+
+  function addChartAxisBy(field: DimensionValue, axis: Axis) {
     const id = appendDimension(field)
     config.value.view[axis] = [...config.value.view[axis], id]
 
     // y 轴额外处理
-    if (axis === AXIS_ENUM.y) {
-      const emptySetting = getChartAttrSetting()
-      chartAttr.value[id] = emptySetting
+    if (axis === AXIS_TYPES.y) {
+      chartAttr.value[id] = getChartAttrSetting()
+      if (!isEntireDimEmpty.value) {
+        // TODO: 缓存当前entire属性里的个数，以避免索引全部
+        图表属性名.forEach((attr) => {
+          const dimIds = _getAttrDimensionIds('entire', attr)
+          dimIds.forEach((dimId) => {
+            const entrieValue = getDimensionById(dimId)
+            const field = genDimensionByAnother(entrieValue)
+            const newId = appendDimension(field)
+            chartAttr.value[id][attr].dimensionIds.push(newId)
+          })
+        })
+      }
     }
   }
 
@@ -403,21 +452,98 @@ export const useWidgetStore = defineStore('widget', () => {
     delete chartAttr.value[dimId]
   }
 
-  function addChartDimensionBy(field: TableField, attr: I图表属性名) {
-    const id = appendDimension(field)
-    chartAttr.value.entire[attr].dimensionIds.push(id)
+  function addChartDimensionBy(originField: DimensionValue, attr: I图表属性名, y = 'entire') {
+    const id = appendDimension(originField)
+    chartAttr.value[y][attr].dimensionIds.push(id)
+    if (y === 'entire') {
+      entireDimCount.value++
+      if (isMultipleY.value) {
+        // 全部增，分量亦增
+        const otherY = _getOtherY(yAxisInfos.value)
+        // 清空分量
+        otherY.forEach((yAxis) => {
+          if (_checkChartAttrOfY(attr, yAxis.id!)) {
+            _clearChartAttrOfY(attr, yAxis.id!)
+          }
+        })
+        // 复加之
+        const needAddIds = _getAttrDimensionIds('entire', attr)
+        needAddIds.forEach((id) => {
+          const field = genDimensionByAnother(getDimensionById(id))
+          _addDimension(field, attr)
+        })
+      }
+    }
+    else {
+      // 分量增，若与别的分量同，则添加entrie，否则清空entire
+      const otherY = _getOtherY(yAxisInfos.value, ['entire', y])
+      const originFields = _getAttrDimensionIds(y, attr)
+        .map(id => getDimensionById(id))
+
+      const originFieldIdsStr = originFields.map(field => field.fieldId).join()
+
+      const isSame = otherY.every((yAxis) => {
+        const fieldIdsStr = _getAttrDimensionIds(yAxis.id!, attr)
+          .map(id => getDimensionById(id).fieldId)
+          .join()
+        return fieldIdsStr === originFieldIdsStr
+      })
+
+      if (isSame) {
+        originFields.forEach((field) => {
+          const id = appendDimensionByAnother(field)
+          chartAttr.value.entire[attr].dimensionIds.push(id)
+        })
+      }
+      else {
+        _clearChartAttrOfY(attr, 'entire')
+      }
+    }
   }
 
-  function delChartDimensionBy(index: number, attr: I图表属性名) {
-    const dimId = chartAttr.value.entire[attr].dimensionIds.splice(index, 1)[0]
-    delete config.value.dimensions[dimId]
-    delete chartAttr.value[dimId]
+  function delChartDimensionBy(index: number, attr: I图表属性名, y = 'entire') {
+    _delChartDimensionOfY(index, attr, y)
+
+    if (y === 'entire') {
+      entireDimCount.value--
+      yAxisInfos.value.forEach((yAxis) => {
+        _delChartDimensionOfY(index, attr, yAxis.id!)
+      })
+    }
+    else {
+      _clearChartAttrOfY(attr, 'entire')
+    }
+  }
+
+  function _getOtherY(yInfo: DimensionValue[], yArr = ['entire']) {
+    return yInfo.filter(yAxis => !yArr.includes(yAxis.id!))
+  }
+
+  function _checkChartAttrOfY(attr: I图表属性名, y = 'entire') {
+    return chartAttr.value[y][attr].dimensionIds.length !== 0
+  }
+
+  function _delChartDimensionOfY(index: number, attr: I图表属性名, y = 'entire', count = 1) {
+    const dimIds = chartAttr.value[y][attr].dimensionIds.splice(index, count)
+    dimIds.forEach(id => delete config.value.dimensions[id])
+    return dimIds
+  }
+
+  function _clearChartAttrOfY(attr: I图表属性名, y = 'entire') {
+    const dimIds = chartAttr.value[y][attr].dimensionIds.splice(0)
+    dimIds.forEach(dimId => delete config.value.dimensions[dimId])
   }
 
   return {
     config,
     chartAttr,
+    yAxisInfos,
+    isMultipleY,
+
     getDimensionById,
+    getDimensionsFromChartAttr,
+    getDimensionsFromAxis,
+
     addChartAxisBy,
     delChartAxisBy,
     addChartDimensionBy,
