@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<{
   height?: string
   option: Ref<EChartsOption>
 }>(), {
-  width: '100%',
+  width: '1500px',
   height: '100%',
 })
 const echartRef = ref<HTMLElement | null>(null)
@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="echartRef" :class="props.class" :style="{ width: props.width, height: props.height }" />
+  <div ref="echartRef" :class="props.class" of-scroll :style="{ width: props.width, height: props.height }" />
 </template>
 
 <style scoped>

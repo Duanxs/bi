@@ -145,7 +145,7 @@ export function genChartOptions(): Ref<EChartsOption> {
     }
   }
   const options = ref({
-    grid: { left: 0, right: 0, bottom: '30%' },
+    grid: { top: '5%', left: '5%', right: 0, bottom: '15%' },
     legend: [
       {
         title: '自定义标题123',
@@ -154,11 +154,6 @@ export function genChartOptions(): Ref<EChartsOption> {
         top: 'center',
         // data: ['one', 'two'],
       },
-      // {
-      //   top: 20,
-      //   title: '自定义标题456',
-      //   data: ['three', 'fore'],
-      // },
     ],
     tooltip: {},
     dataset: {
@@ -166,15 +161,7 @@ export function genChartOptions(): Ref<EChartsOption> {
       source,
     },
     xAxis: xAxis.value,
-    yAxis: {
-    },
-    // dataZoom: [{
-    //   type: 'slider',
-    //   brushSelect: false,
-    //   zoomLock: true,
-    //   start: 0,
-    //   end: 30,
-    // }],
+    yAxis: {},
     series,
   },
   ) as Ref<EChartsOption>
@@ -184,11 +171,9 @@ export function genChartOptions(): Ref<EChartsOption> {
 }
 
 function calcAxisOffset(i: number, total: number) {
-  if (total === 1) {
+  if (total === 1 || i === total - 1) {
     return 0
   }
-  if (i === total - 1)
-    return 0
   return (total - i) * 22
 }
 

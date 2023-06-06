@@ -53,7 +53,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
         结果过滤
       </div>
     </div>
-    <div class="widget-chart" flex-1 p-16px flex flex-col>
+    <div class="widget-chart" flex-1 p-16px flex flex-col max-w-full of-scroll>
       <div relative>
         <div class="x-axis">
           <FieldDragBox
@@ -73,7 +73,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
             </template>
           </FieldDragBox>
         </div>
-        <div class="y-axis">
+        <div class="y-axis" of-scroll>
           <FieldDragBox
             name="y"
             :fields="fieldsY"
@@ -101,7 +101,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
           <div i-icon-park-outline-sort-two text-14px />
         </div>
       </div>
-      <div flex-1>
+      <div flex-1 max-w-full of-scroll>
         <BaseChart :option="chartOption" />
       </div>
     </div>
