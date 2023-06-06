@@ -14,7 +14,7 @@ const currentChart = ref(tableType[0])
 
 const drag = useDragStore()
 
-const chartOption = genChartOptions()
+const chartOption = computed(() => genChartOptions())
 
 const { addChartAxisBy, delChartAxisBy, getDimensionsFromAxis } = useWidgetStore()
 const fieldsX = computed(() => getDimensionsFromAxis(AXIS_TYPES.x))

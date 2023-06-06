@@ -400,6 +400,9 @@ export const useWidgetStore = defineStore('widget', () => {
   function getDimensionById(id: string) {
     return config.value.dimensions[id]
   }
+  function getFieldIdByDimId(id: string) {
+    return config.value.dimensions[id].fieldId
+  }
 
   function getDimensionsFromChartAttr(id: string, attr: I图表属性名) {
     return chartAttr.value[id][attr].dimensionIds.map((id) => {
@@ -444,6 +447,7 @@ export const useWidgetStore = defineStore('widget', () => {
         })
       }
     }
+    console.log('addChartAxisBy ~ chartAttr:', chartAttr)
   }
 
   function delChartAxisBy(index: number, axis: Axis) {
@@ -539,6 +543,8 @@ export const useWidgetStore = defineStore('widget', () => {
     chartAttr,
     yAxisInfos,
     isMultipleY,
+
+    getFieldIdByDimId,
 
     getDimensionById,
     getDimensionsFromChartAttr,

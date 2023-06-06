@@ -87,69 +87,111 @@ export function getChartAttrById(id: string) {
 }
 
 export function genChartOptions(): Ref<EChartsOption> {
-  const index = tableData.fields.findIndex(field => field.name === '分级市场')
-  const index2 = tableData.fields.findIndex(field => field.name === '销售量')
-  const data = tableData.data
-  const fieldsSet = new Set(data.map(item => item[index]))
+  const widgetStore = useWidgetStore()
+  const xDims = widgetStore.getDimensionsFromAxis(AXIS_TYPES.x)
+  // console.log('==aaagenChartOptions ~ xDims:', xDims)
+  const yDims = widgetStore.getDimensionsFromAxis(AXIS_TYPES.y)
 
-  // [
-  //   ['一级市场', '7593'],
-  //   ['二级市场', '2914'],
-  //   ['三级市场', '1296'],
-  //   ['四级市场', '2999'],
-  // ]
-  const fieldObj: any = {}
-  fieldsSet.forEach((item) => {
-    fieldObj[item] = 0
-  })
-  data.forEach((item) => {
-    fieldObj[item[index]] += +item[index2]
-  })
-  const dataset = []
-  for (const key in fieldObj) {
-    dataset.push([key, fieldObj[key]])
+  const { source, xData, dimensions } = calcTableData(xDims, yDims)
+
+  const xCount = xData.length
+  const xAxis = computed(() => xData.map((data, i) => {
+    if (!data)
+      return {}
+    return {
+      type: 'category',
+      name: i ? '' : xDims[0].name!,
+      data,
+      position: 'bottom',
+      nameLocation: 'center',
+      nameGap: 32,
+      offset: calcAxisOffset(i, xCount),
+      axisLabel: {
+        // align: 'center',
+        rotate: calcAxisRotate(i, xCount),
+        interval: 0,
+      },
+      axisLine: {
+        show: i === 0,
+      },
+      axisTick: {
+        show: i !== xCount - 1,
+        alignWithLabel: false,
+        length: i === 0 ? calcAxisOffset(i, xCount) + 22 : 22,
+        lineStyle: {
+          color: '#ccc',
+        },
+      },
+      splitLine: {
+        show: i < xCount - 1,
+        lineStyle: {
+          color: '#ccc',
+        },
+      },
+    }
+  }) as any)
+
+  if (!xAxis.value.length) {
+    xAxis.value.push({})
   }
-  // console.log('dataset ~ dataset:', dataset)
-  const options = ref<EChartsOption>(
-    {
-      legend: {},
-      tooltip: {},
-      dataset: {
-        // 提供一份数据。
-        dimensions: Array.from(fieldsSet),
-        source: dataset,
+
+  const series = []
+  if (source.length) {
+    for (let i = 1; i < source[0].length; i++) {
+      series.push({
+        type: 'bar',
+        barCategoryGap: '2%',
+      })
+    }
+  }
+  const options = ref({
+    grid: { left: 0, right: 0, bottom: '30%' },
+    legend: [
+      {
+        title: '自定义标题123',
+        orient: 'vertical',
+        right: 10,
+        top: 'center',
+        // data: ['one', 'two'],
       },
-      xAxis: {
-        type: 'category',
-        name: '分级市场',
-        nameLocation: 'middle',
-        nameGap: 30,
-        axisLabel: {
-          backgroundColor: '#333',
-          width: 100,
-          height: 22,
-          lineHeight: 22,
-          margin: 0,
-        },
-        axisTick: {
-          show: false,
-        },
-      },
-      // 声明一个 Y 轴，数值轴。
-      yAxis: {},
-      // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
-      series: [
-        {
-          type: 'bar',
-          encode: {
-            x: '分级市场',
-            y: '销售量',
-          },
-          // seriesLayoutBy: 'row',
-        },
-      ],
+      // {
+      //   top: 20,
+      //   title: '自定义标题456',
+      //   data: ['three', 'fore'],
+      // },
+    ],
+    tooltip: {},
+    dataset: {
+      dimensions,
+      source,
     },
+    xAxis: xAxis.value,
+    yAxis: {
+    },
+    // dataZoom: [{
+    //   type: 'slider',
+    //   brushSelect: false,
+    //   zoomLock: true,
+    //   start: 0,
+    //   end: 30,
+    // }],
+    series,
+  },
   ) as Ref<EChartsOption>
 
+  console.log('genChartOptions ~ options:', options)
   return options
+}
+
+function calcAxisOffset(i: number, total: number) {
+  if (total === 1) {
+    return 0
+  }
+  if (i === total - 1)
+    return 0
+  return (total - i) * 22
+}
+
+function calcAxisRotate(i: number, total: number) {
+  return (i !== 0 && i === total - 1) ? 45 : 0
 }
