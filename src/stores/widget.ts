@@ -447,7 +447,6 @@ export const useWidgetStore = defineStore('widget', () => {
         })
       }
     }
-    console.log('addChartAxisBy ~ chartAttr:', chartAttr)
   }
 
   function delChartAxisBy(index: number, axis: Axis) {

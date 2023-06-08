@@ -81,7 +81,7 @@ onMounted(() => {
 })
 
 watchEffect(() => {
-  echartInstance.value?.setOption(option.value)
+  echartInstance.value?.setOption(option.value, { notMerge: true })
 })
 
 onBeforeUnmount(() => {

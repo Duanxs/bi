@@ -92,7 +92,25 @@ export function genChartOptions(): Ref<EChartsOption> {
   // console.log('==aaagenChartOptions ~ xDims:', xDims)
   const yDims = widgetStore.getDimensionsFromAxis(AXIS_TYPES.y)
 
-  const { source, xData, dimensions } = calcTableData(xDims, yDims)
+  const colorDims = widgetStore.getDimensionsFromChartAttr('entire', CHART_ATTRS.颜色)
+
+  const { sources, xData, dimensions } = calcTableData(xDims, yDims, {
+    颜色: colorDims,
+    形状: [],
+    大小: [],
+    标签: [],
+    提示: [],
+    粒度: [],
+    热力色: [],
+    连线: [],
+    半径: [],
+    角度: [],
+    文本: [],
+    指针值: [],
+    目标值: [],
+    起点: [],
+    终点: [],
+  })
 
   const xCount = xData.length
   const xAxis = computed(() => xData.map((data, i) => {
@@ -135,15 +153,19 @@ export function genChartOptions(): Ref<EChartsOption> {
     xAxis.value.push({})
   }
 
-  const series = []
-  if (source.length) {
-    for (let i = 1; i < source[0].length; i++) {
-      series.push({
-        type: 'bar',
-        barCategoryGap: '2%',
-      })
+  const series: any[] = []
+  sources.forEach((data, index) => {
+    // console.log('sources.forEach ~ source:', data)
+    if (data.length) {
+      for (let i = 1; i < data[0]?.length; i++) {
+        series.push({
+          type: 'bar',
+          datasetIndex: index,
+          barMaxWidth: '40',
+        })
+      }
     }
-  }
+  })
   const options = ref({
     grid: { top: '5%', left: '5%', right: 0, bottom: '15%' },
     legend: [
@@ -156,10 +178,7 @@ export function genChartOptions(): Ref<EChartsOption> {
       },
     ],
     tooltip: {},
-    dataset: {
-      dimensions,
-      source,
-    },
+    dataset: sources.map(source => ({ dimensions, source })),
     xAxis: xAxis.value,
     yAxis: {},
     series,
