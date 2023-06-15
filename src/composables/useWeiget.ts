@@ -1,4 +1,4 @@
-import type { EChartsOption } from 'echarts'
+import type { G2ViewTree, Node } from '@antv/g2/lib/runtime'
 import type { DimensionValue } from './types'
 import { chartAttrMap } from '@/constant/chartTypeAttr'
 import { tableData } from '@/constant/data'
@@ -86,7 +86,7 @@ export function getChartAttrById(id: string) {
   return field as unknown as DimensionValue
 }
 
-export function genChartOptions(): Ref<EChartsOption> {
+export function genChartOptions(): G2ViewTree {
   const widgetStore = useWidgetStore()
   const xDims = widgetStore.getDimensionsFromAxis(AXIS_TYPES.x)
   // console.log('==aaagenChartOptions ~ xDims:', xDims)
@@ -94,7 +94,7 @@ export function genChartOptions(): Ref<EChartsOption> {
 
   const colorDims = widgetStore.getDimensionsFromChartAttr('entire', CHART_ATTRS.颜色)
 
-  const { sources, xData, dimensions } = calcTableData(xDims, yDims, {
+  const { data } = calcTableData(xDims, yDims, {
     颜色: colorDims,
     形状: [],
     大小: [],
@@ -111,91 +111,119 @@ export function genChartOptions(): Ref<EChartsOption> {
     起点: [],
     终点: [],
   })
+  console.log('genChartOptions ~ result:', data)
+  const { isMultipleY } = widgetStore
 
-  const xCount = xData.length
-  const xAxis = computed(() => xData.map((data, i) => {
-    if (!data)
-      return {}
-    return {
-      type: 'category',
-      name: i ? '' : xDims[0].name!,
-      data,
-      position: 'bottom',
-      nameLocation: 'center',
-      nameGap: 32,
-      offset: calcAxisOffset(i, xCount),
-      axisLabel: {
-        // align: 'center',
-        rotate: calcAxisRotate(i, xCount),
-        interval: 0,
-      },
-      axisLine: {
-        show: i === 0,
-      },
-      axisTick: {
-        show: i !== xCount - 1,
-        alignWithLabel: false,
-        length: i === 0 ? calcAxisOffset(i, xCount) + 22 : 22,
-        lineStyle: {
-          color: '#ccc',
-        },
-      },
-      splitLine: {
-        show: i < xCount - 1,
-        lineStyle: {
-          color: '#ccc',
-        },
-      },
-    }
-  }) as any)
-
-  if (!xAxis.value.length) {
-    xAxis.value.push({})
+  let options: G2ViewTree & { children: Node[] } = {
+    theme: 'classic',
+    type: 'view',
+    data: {
+      type: 'inline',
+      value: data || [],
+    },
+    children: [],
   }
 
-  const series: any[] = []
-  sources.forEach((data, index) => {
-    // console.log('sources.forEach ~ source:', data)
-    if (data.length) {
-      for (let i = 1; i < data[0]?.length; i++) {
-        series.push({
-          type: 'bar',
-          datasetIndex: index,
-          barMaxWidth: '40',
-        })
-      }
+  if (xDims.length === 1) {
+    yDims.forEach((yDim, i) => {
+      options.children!.push({
+        type: 'interval',
+        encode: {
+          x: xDims[0]?.name || '',
+          y: yDim?.name || '',
+          series: () => yDim?.name || '',
+        },
+        tooltip: [...xDims.map(dim => dim.name), ...yDims.map(dim => dim.name)],
+        style: {
+          maxWidth: 50,
+        },
+      })
+    })
+  }
+  else if (xDims.length > 1) {
+    const children = yDims.map((yDim, i) => {
+      const child = genOption(xDims.slice(1), yDim, isMultipleY)
+      return Array.isArray(child) ? child[0] : child
+    })
+    options = {
+      ...options,
+      // theme: 'classic',
+      // paddingLeft: 100,
+      type: 'facetRect',
+      width: 1500,
+      encode: { x: xDims[0]?.name || '' },
+      axis: { x: { position: 'bottom', tick: false } },
+      children: [{
+        type: 'view',
+        frame: false,
+        // children: Array.isArray(children) ? children : [children],
+        children,
+      }],
     }
-  })
-  const options = ref({
-    grid: { top: '5%', left: '5%', right: 0, bottom: '15%' },
-    legend: [
-      {
-        title: '自定义标题123',
-        orient: 'vertical',
-        right: 10,
-        top: 'center',
-        // data: ['one', 'two'],
-      },
-    ],
-    tooltip: {},
-    dataset: sources.map(source => ({ dimensions, source })),
-    xAxis: xAxis.value,
-    yAxis: {},
-    series,
-  },
-  ) as Ref<EChartsOption>
+  }
+  else {
+    options.children!.push({
+      theme: 'classic',
+    })
+  }
 
   console.log('genChartOptions ~ options:', options)
   return options
 }
 
-function calcAxisOffset(i: number, total: number) {
-  if (total === 1 || i === total - 1) {
-    return 0
-  }
-  return (total - i) * 22
-}
-
-function calcAxisRotate(i: number, total: number) {
-  return (i !== 0 && i === total - 1) ? 45 : 0
+function genOption(
+  dims: DimensionValue[],
+  yDim: DimensionValue,
+  isMultipleY: boolean,
+  result: any[] = [],
+): Node[] | G2ViewTree {
+  if (dims.length === 1)
+    return {
+      type: 'interval',
+      frame: false,
+      paddingBottom: 60,
+      encode: {
+        x: dims[0]?.name || '',
+        y: yDim.name || '',
+        series: () => isMultipleY && (yDim.name || ''),
+      },
+      scale: {
+        y: {
+          key: 'left-y',
+          type: 'linear',
+          // domain: [0, 7000],
+        },
+      },
+      axis: {
+        x: {
+          position: 'bottom',
+          title: false,
+          labelAutoRotate: true,
+          labelAutoHide: true,
+          transform: true,
+        },
+        y: {
+          title: false,
+        },
+      },
+      // tooltip: [...dims.map(dim => dim.name), ...yDims.map(dim => dim.name)],
+      // style: {
+      //   maxWidth: 50,
+      // },
+    }
+  const children = genOption(dims.slice(1), yDim, isMultipleY, result[0]?.children || [])
+  result.push({
+    type: 'facetRect',
+    encode: { x: dims[0]?.name || '' },
+    paddingBottom: 20,
+    axis: {
+      x: { position: 'bottom', title: false, tick: false },
+      y: { title: false },
+    },
+    scale: {
+      x: { padding: 0, paddingInner: 0, paddingOuter: 0 },
+    },
+    children: Array.isArray(children) ? children : [children],
+  })
+  return result
 }

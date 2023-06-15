@@ -2,6 +2,12 @@ import type { DimensionValue } from '@/composables/types'
 import type { I图表属性名 } from '@/constant/chartTypeAttrSetting'
 import { tableData } from '@/constant/data'
 
+function parseNumber(str: string) {
+  if (typeof str === 'number')
+    return str
+  return +(str.replaceAll(',', ''))
+}
+
 export function calcTableData(
   xDims: DimensionValue[],
   yDims: DimensionValue[],
@@ -19,47 +25,78 @@ export function calcTableData(
   const colorNames = genDimMap(attrDims.颜色, colorIndex) as string[]
 
   const sources: any[] = []
-  let xData: string[][] = []
-  let dimensions: string[] = []
+  const xData: string[][] = []
+  const dimensions: string[] = []
 
   const colorLength = colorNames?.length
-  if (colorLength) {
-    colorNames.forEach((colorName, i) => {
-      const res = calcData(xDims, yDims, { color: { name: colorName, index: colorIndex } })
-      xData = res.xData
-      dimensions = res.dimensions
-      console.log('colorNames.forEach ~ res:', res)
-      sources.push(res.source)
-      // sources.push(res.source.map((data, j) => {
-      //   return [data[0], ...data.slice(1 + i * colorLength, 1 + i * colorLength + colorLength)]
-      // }))
-    })
-  }
-  else {
-    const res = calcData(xDims, yDims)
+  // if (colorLength) {
+  //   colorNames.forEach((colorName, i) => {
+  //     const res = calcData(xDims, yDims)
+  //     xData = res.xData
+  //     dimensions = res.dimensions
+  //     sources.push(res.source)
+  //     // sources.push(res.source.map((data, j) => {
+  //     //   return [data[0], ...data.slice(1 + i * colorLength, 1 + i * colorLength + colorLength)]
+  //     // }))
+  //   })
+  // }
+  // else {
+  for (const yDim of yDims) {
+    const res = calcData(xDims, yDim)
     sources.push(res.source)
-    xData = res.xData
-    dimensions = res.dimensions
   }
 
-  return { sources, xData, dimensions }
+  const data = sources[0]
+  for (let i = 1; i < yDims.length; i++) {
+    for (let j = 0; j < sources[0].length; j++) {
+      const key = yDims[i]?.name || ''
+      if (key) {
+        data[j][key] = sources[i][j][key]
+      }
+    }
+  }
+  // xData = res.xData
+  // dimensions = res.dimensions
+  // }
+
+  return { sources, xData, dimensions, data }
 }
 
 function calcData(
   xDims: DimensionValue[],
-  yDims: DimensionValue[],
-  attr?: Record<string, { name: string; index: number }>,
+  yDim: DimensionValue,
 ) {
-  const source: Array<Array<string | number>> = []
+  const data = tableData.data.map((data) => {
+    const obj: Record<string, any> = {}
+    tableData.fields.forEach((field, index) => {
+      obj[field.name] = data[index]
+    })
+    return obj
+  })
+  // console.log('data ~ data:', data)
 
-  const hasColor = Boolean(attr?.color)
-  console.log('attr:', attr)
-  console.log('hasColor:', hasColor)
+  const dimIndexMap = genDimIndexMap([...xDims, yDim]) as Record<string, number>
+  const source: Record<string, any>[] = []
+  const rowMap: Record<string, number> = {}
+  let currentIndex = 0
+  const yDimName = yDim.name!
+  data.forEach((row) => {
+    const selectDims = xDims.map(xDim => row[xDim.name!])
+    const key = selectDims.join('_')
+    const index = rowMap[key]
+    if (index === undefined) {
+      rowMap[key] = currentIndex
+      currentIndex++
+      source.push(row)
+    }
+    else {
+      source[index][yDimName] = parseNumber(source[index][yDimName]) + parseNumber(row[yDimName])
+    }
+  })
 
-  const dimIndexMap = genDimIndexMap([...xDims, ...yDims]) as Record<string, number>
+  // const hasColor = Boolean(attr?.color)
+
   const rowNames = genDimMap(xDims, dimIndexMap) as string[][]
-
-  const rowMap: Record<string, { key: string; value: number }> = {}
 
   const total = rowNames.reduce((prev, cur) => prev * cur.length, 1)
   let repeatCount = total
@@ -85,55 +122,6 @@ function calcData(
     xData.push(Array.from<string[]>({ length: prevCount }).fill(names).flat())
     prevCount *= names.length
   }
-
-  for (let i = 0; i < total; i++) {
-    const rowKeyArr: string[] = []
-    for (let j = 0; j < rowFullNames.length; j++) {
-      rowKeyArr.push(rowFullNames[j][i])
-    }
-    const rowKey = hasColor ? [...rowKeyArr, attr!.color.name].join('_') : rowKeyArr.join('_')
-    rowMap[rowKey] = {
-      key: `${rowKey}_${i}`,
-      value: 0,
-    }
-  }
-
-  tableData.data.forEach((row) => {
-    const rowKey = hasColor
-      ? `${xDims.map(xDim => row[dimIndexMap[xDim.id!]]).join('_')}_${attr!.color.name}`
-      : xDims.map(xDim => row[dimIndexMap[xDim.id!]]).join('_')
-    if (yDims.length) {
-      if (hasColor) {
-        if (row[attr!.color.index] === attr!.color.name) {
-          rowMap[rowKey].value += +row[dimIndexMap[yDims[0].id!]]
-        }
-      }
-      else {
-        rowMap[rowKey].value += +row[dimIndexMap[yDims[0].id!]]
-      }
-    }
-  })
-  console.log('tableData.data.forEach ~ rowMap:', rowMap)
-
-  const sourceNameMap: Record<string, number> = {}
-  let sourceNameIndex = 0
-
-  for (const rowKey in rowMap) {
-    const names = rowKey.split('_')
-    const dim0 = names[0]
-    const dim1 = names.at(hasColor ? -2 : -1)
-
-    if (dim1) {
-      if (sourceNameMap[dim0] === undefined) {
-        sourceNameMap[dim0] = sourceNameIndex
-        sourceNameIndex++
-        source[sourceNameMap[dim0]] = [dim0]
-      }
-      source[sourceNameMap[dim0]].push(rowMap[rowKey].value)
-    }
-  }
-
-  // console.log('rowFullNames:', rowFullNames)
   const dimensions: string[] = []
   if (xDims.length) {
     const dimCount = total / rowNames.at(-1)!.length
