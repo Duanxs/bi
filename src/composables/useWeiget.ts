@@ -111,12 +111,11 @@ export function genChartOptions(): G2ViewTree {
     起点: [],
     终点: [],
   })
-  console.log('genChartOptions ~ result:', data)
-  const { isMultipleY } = widgetStore
 
-  let options: G2ViewTree & { children: Node[] } = {
+  const options: G2ViewTree & { children: Node[] } = {
     theme: 'classic',
     type: 'view',
+    // autoFit: true,
     data: {
       type: 'inline',
       value: data || [],
@@ -124,47 +123,99 @@ export function genChartOptions(): G2ViewTree {
     children: [],
   }
 
-  if (xDims.length === 1) {
-    yDims.forEach((yDim, i) => {
-      options.children!.push({
+  const xCount = xDims.length
+  const yCount = yDims.length
+
+  if (xCount === 0) {
+    // TODO: x = 0， y = 0 时，对应渲染逻辑
+  }
+  else if (xCount === 1) {
+    if (yCount === 1) {
+      const xName = xDims[0].name
+      const yName = yDims[0].name
+      const colorName = colorDims[0]?.name
+      return {
+        theme: 'classic',
         type: 'interval',
-        encode: {
-          x: xDims[0]?.name || '',
-          y: yDim?.name || '',
-          series: () => yDim?.name || '',
+        // autoFit: true,
+        data: {
+          type: 'inline',
+          value: data || [],
         },
-        tooltip: [...xDims.map(dim => dim.name), ...yDims.map(dim => dim.name)],
+        encode: {
+          x: xName,
+          y: yName,
+          color: colorName || (() => ''),
+        },
+        tooltip: [xName, yName],
         style: {
           maxWidth: 50,
         },
+        // FIXME: 值过大时，疑似无法渲染
+        // scale: {
+        //   y: {
+        //     type: 'linear',
+        //     nice: true,
+        //     // domain: [0, 7000],
+        //   },
+        // },
+      }
+    }
+    else if (yCount > 1) {
+      const children: Node[] = []
+      yDims.forEach((yDim) => {
+        children.push({
+          type: 'interval',
+          encode: {
+            x: xDims[0].name,
+            y: yDim.name,
+            series: () => yDim.name,
+            color: colorDims[0]?.name || (() => ''),
+          },
+          scale: {
+            y: {
+              key: 'left-y',
+              type: 'linear',
+              // domain: [0, 7000],
+            },
+          },
+          tooltip: [...xDims.map(dim => dim.name), yDim.name, colorDims[0]?.name || ''],
+          style: {
+            maxWidth: 50,
+          },
+        })
       })
-    })
-  }
-  else if (xDims.length > 1) {
-    const children = yDims.map((yDim, i) => {
-      const child = genOption(xDims.slice(1), yDim, isMultipleY)
-      return Array.isArray(child) ? child[0] : child
-    })
-    options = {
-      ...options,
-      // theme: 'classic',
-      // paddingLeft: 100,
-      type: 'facetRect',
-      width: 1500,
-      encode: { x: xDims[0]?.name || '' },
-      axis: { x: { position: 'bottom', tick: false } },
-      children: [{
+      return {
+        theme: 'classic',
         type: 'view',
-        frame: false,
-        // children: Array.isArray(children) ? children : [children],
+        // autoFit: true,
+        data: {
+          type: 'inline',
+          value: data || [],
+        },
         children,
-      }],
+      }
     }
   }
-  else {
-    options.children!.push({
+  else if (xCount > 1) {
+    // FIXME: x多于两个时，会渲染多个y，且值域不同
+    const children = genOption(xDims.slice(1), yDims, { colorDims })
+    const options: G2ViewTree = {
       theme: 'classic',
-    })
+      // autoFit: true,
+      type: 'facetRect',
+      data: {
+        type: 'inline',
+        value: data || [],
+      },
+      // theme: 'classic',
+      // paddingLeft: 100,
+      // width: 1500,
+      encode: { x: xDims[0]?.name || '' },
+      axis: { x: { position: 'bottom', tick: false } },
+      children,
+    }
+    return options
   }
 
   console.log('genChartOptions ~ options:', options)
@@ -173,45 +224,55 @@ export function genChartOptions(): G2ViewTree {
 
 function genOption(
   dims: DimensionValue[],
-  yDim: DimensionValue,
-  isMultipleY: boolean,
+  yDims: DimensionValue[],
+  attr: any,
   result: any[] = [],
-): Node[] | G2ViewTree {
-  if (dims.length === 1)
-    return {
-      type: 'interval',
-      frame: false,
-      paddingBottom: 60,
-      encode: {
-        x: dims[0]?.name || '',
-        y: yDim.name || '',
-        series: () => isMultipleY && (yDim.name || ''),
-      },
-      scale: {
-        y: {
-          key: 'left-y',
-          type: 'linear',
+): Node[] {
+  if (dims.length === 1) {
+    const children: Node[] = []
+    for (const yDim of yDims) {
+      children.push({
+        type: 'interval',
+        frame: false,
+        paddingBottom: 60,
+        encode: {
+          x: dims[0]?.name || '',
+          y: yDim.name || '',
+          series: () => (yDim.name || ''),
+          color: attr.colorDims[0]?.name || (() => ''),
+        },
+        scale: {
+          y: {
+            key: 'left-y',
+            type: 'linear',
           // domain: [0, 7000],
+          },
         },
-      },
-      axis: {
-        x: {
-          position: 'bottom',
-          title: false,
-          labelAutoRotate: true,
-          labelAutoHide: true,
-          transform: true,
+        axis: {
+          x: {
+            position: 'bottom',
+            title: false,
+            labelAutoRotate: true,
+            labelAutoHide: true,
+            transform: true,
+          },
+          y: {
+            title: false,
+          },
         },
-        y: {
-          title: false,
-        },
-      },
       // tooltip: [...dims.map(dim => dim.name), ...yDims.map(dim => dim.name)],
       // style: {
       //   maxWidth: 50,
       // },
+      })
     }
-  const children = genOption(dims.slice(1), yDim, isMultipleY, result[0]?.children || [])
+    return [{
+      type: 'view',
+      frame: false,
+      children,
+    }]
+  }
+  const children = genOption(dims.slice(1), yDims, attr, result[0]?.children || [])
   result.push({
     type: 'facetRect',
     encode: { x: dims[0]?.name || '' },

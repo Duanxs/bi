@@ -37,6 +37,7 @@ onMounted(() => {
 })
 
 watchEffect(() => {
+  // TODO: 此处欠考虑，if里似乎监听不到，需在外部打印方得监听
   console.log('watchEffect ~ option:', option.value)
   if (chart) {
     chart.clear()

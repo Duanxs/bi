@@ -88,9 +88,9 @@ function onFieldDragEnd(_e: DragEvent, id: string, index: number) {
   >
     <div
       flex items-center
-      min-w-60px pl-6px
+      min-w-60px pl-4px
       min-h-36px
-      py-6px rounded
+      py-4px rounded
       bg-hex-f8f9fc
     >
       <slot name="prefix" />

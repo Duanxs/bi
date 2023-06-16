@@ -20,9 +20,11 @@ export function calcTableData(
       dimensions: [],
     }
   // TODO:
-  // 默认x只可以拖维度，y只拖指标，后期再调整为自由拖。且 y只处理一条数据
+  // 默认x只可以拖维度，y只拖指标，后期再调整为自由拖
   const colorIndex = genDimIndexMap(attrDims.颜色, true) as number
+  console.log('attrDims.颜色:', attrDims.颜色[0])
   const colorNames = genDimMap(attrDims.颜色, colorIndex) as string[]
+  const colorDim = attrDims.颜色[0]
 
   const sources: any[] = []
   const xData: string[][] = []
@@ -42,7 +44,8 @@ export function calcTableData(
   // }
   // else {
   for (const yDim of yDims) {
-    const res = calcData(xDims, yDim)
+    const combineDims = colorDim ? [...xDims, colorDim] : xDims
+    const res = calcData(combineDims, yDim)
     sources.push(res.source)
   }
 

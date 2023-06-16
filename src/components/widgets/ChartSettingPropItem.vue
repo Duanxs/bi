@@ -34,10 +34,10 @@ function delChartAttrBy(index: number) {
       <div
         :class="{ label: attrs.component }"
         flex items-center
-        h-full rounded
+        min-h-32px rounded
         overflow-hidden
       >
-        <div ml-4px>
+        <div ml-4px select-none>
           {{ attrs.label }}
         </div>
         <div
