@@ -10,6 +10,7 @@ export interface ChartAttrItem {
   label: I图表属性名
   component: string | null
   multiple: boolean
+  componentWidth: number
   setting: typeof 图表属性配置[keyof typeof 图表属性配置]
 }
 
@@ -18,92 +19,107 @@ type ChartAttr = Record<CHART_ATTRS, ChartAttrItem>
 const chartAttr: ChartAttr = {
   [CHART_ATTRS.颜色]: {
     label: '颜色',
-    component: 'ColorPicker',
+    component: 'ColorPane',
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.颜色],
   },
   [CHART_ATTRS.大小]: {
     label: '大小',
     component: 'Slider',
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.大小],
   },
   [CHART_ATTRS.标签]: {
     label: '标签',
     component: 'Switch',
     multiple: true,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.标签],
   },
   [CHART_ATTRS.提示]: {
     label: '提示',
     component: 'Switch',
     multiple: true,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.提示],
   },
   [CHART_ATTRS.粒度]: {
     label: '粒度',
     component: null,
     multiple: true,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.粒度],
   },
   [CHART_ATTRS.形状]: {
     label: '形状',
     component: 'Select',
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.形状],
   },
   [CHART_ATTRS.热力色]: {
     label: '热力色',
-    component: 'ColorPicker',
+    component: 'ColorPane',
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.热力色],
   },
   [CHART_ATTRS.连线]: {
     label: '连线',
     component: 'Switch',
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.连线],
   },
   [CHART_ATTRS.半径]: {
     label: '半径',
     component: 'Slider',
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.半径],
   },
   [CHART_ATTRS.角度]: {
     label: '角度',
     component: null,
     multiple: true,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.角度],
   },
   [CHART_ATTRS.文本]: {
     label: '文本',
     component: 'Input',
     multiple: true,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.文本],
   },
   [CHART_ATTRS.仪表指针值]: {
     label: '指针值',
     component: null,
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.仪表指针值],
   },
   [CHART_ATTRS.仪表目标值]: {
     label: '目标值',
     component: 'Slider',
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.仪表目标值],
   },
   [CHART_ATTRS.桑基起点]: {
     label: '起点',
     component: null,
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.桑基起点],
   },
   [CHART_ATTRS.桑基终点]: {
     label: '终点',
     component: null,
     multiple: false,
+    componentWidth: 260,
     setting: 图表属性配置[CHART_ATTRS.桑基终点],
   },
 }

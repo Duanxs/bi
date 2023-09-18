@@ -377,6 +377,10 @@ export const useWidgetStore = defineStore('widget', () => {
     entire: getChartAttrSetting(),
   })
 
+  function getAttr(id: string, attr: I图表属性名) {
+    return chartAttr.value[id][attr]
+  }
+
   const yAxisInfos = computed(() => {
     return config.value.view[AXIS_TYPES.y].map((id) => {
       return getDimensionById(id)
@@ -542,6 +546,8 @@ export const useWidgetStore = defineStore('widget', () => {
     chartAttr,
     yAxisInfos,
     isMultipleY,
+
+    getAttr,
 
     getFieldIdByDimId,
 

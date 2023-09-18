@@ -2,6 +2,7 @@ import type { G2ViewTree, Node } from '@antv/g2/lib/runtime'
 import type { DimensionValue } from './types'
 import { chartAttrMap } from '@/constant/chartTypeAttr'
 import { tableData } from '@/constant/data'
+import type { I颜色配置 } from '@/constant/chartTypeAttrSetting'
 
 export function useChartPropsList(chartType: string) {
   switch (chartType) {
@@ -93,6 +94,7 @@ export function genChartOptions(): G2ViewTree {
   const yDims = widgetStore.getDimensionsFromAxis(AXIS_TYPES.y)
 
   const colorDims = widgetStore.getDimensionsFromChartAttr('entire', CHART_ATTRS.颜色)
+  const color = widgetStore.getAttr('entire', CHART_ATTRS.颜色) as I颜色配置
 
   const { data } = calcTableData(xDims, yDims, {
     颜色: colorDims,
@@ -152,13 +154,18 @@ export function genChartOptions(): G2ViewTree {
           maxWidth: 50,
         },
         // FIXME: 值过大时，疑似无法渲染
-        // scale: {
-        //   y: {
-        //     type: 'linear',
-        //     nice: true,
-        //     // domain: [0, 7000],
-        //   },
-        // },
+        scale: {
+          color: {
+            type: 'ordinal',
+            range: color.dimension.colors,
+            // range: ['#7593ed', '#95e3b0'],
+          },
+          y: {
+            type: 'linear',
+            nice: true,
+            // domain: [0, 7000],
+          },
+        },
       }
     }
     else if (yCount > 1) {

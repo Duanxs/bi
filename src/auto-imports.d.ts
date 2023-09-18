@@ -7,6 +7,8 @@ declare global {
   const AXIS_TYPES: typeof import('./enums/chartTypes')['AXIS_TYPES']
   const CHART_ATTRS: typeof import('./enums/chartTypes')['CHART_ATTRS']
   const CHART_TYPES: typeof import('./enums/chartTypes')['CHART_TYPES']
+  const COLORS: typeof import('./constant/color')['COLORS']
+  const COLOR_PLATE: typeof import('./constant/color')['COLOR_PLATE']
   const COLUMN: typeof import('./enums/fieldTypes')['COLUMN']
   const EffectScope: typeof import('vue')['EffectScope']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -49,6 +51,7 @@ declare global {
   const getChartAttrSetting: typeof import('./constant/chartTypeAttr')['getChartAttrSetting']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getFieldName: typeof import('./shared/table')['getFieldName']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
@@ -324,6 +327,8 @@ declare module 'vue' {
     readonly AXIS_TYPES: UnwrapRef<typeof import('./enums/chartTypes')['AXIS_TYPES']>
     readonly CHART_ATTRS: UnwrapRef<typeof import('./enums/chartTypes')['CHART_ATTRS']>
     readonly CHART_TYPES: UnwrapRef<typeof import('./enums/chartTypes')['CHART_TYPES']>
+    readonly COLORS: UnwrapRef<typeof import('./constant/color')['COLORS']>
+    readonly COLOR_PLATE: UnwrapRef<typeof import('./constant/color')['COLOR_PLATE']>
     readonly COLUMN: UnwrapRef<typeof import('./enums/fieldTypes')['COLUMN']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
@@ -366,6 +371,7 @@ declare module 'vue' {
     readonly getChartAttrSetting: UnwrapRef<typeof import('./constant/chartTypeAttr')['getChartAttrSetting']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getFieldName: UnwrapRef<typeof import('./shared/table')['getFieldName']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>

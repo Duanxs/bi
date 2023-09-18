@@ -8,6 +8,12 @@ function parseNumber(str: string) {
   return +(str.replaceAll(',', ''))
 }
 
+export function getFieldName(dimValue: DimensionValue[]) {
+  const index = genDimIndexMap(dimValue, true) as number
+  const names = genDimMap(dimValue, index) as string[]
+  return names
+}
+
 export function calcTableData(
   xDims: DimensionValue[],
   yDims: DimensionValue[],
@@ -21,9 +27,7 @@ export function calcTableData(
     }
   // TODO:
   // 默认x只可以拖维度，y只拖指标，后期再调整为自由拖
-  const colorIndex = genDimIndexMap(attrDims.颜色, true) as number
-  console.log('attrDims.颜色:', attrDims.颜色[0])
-  const colorNames = genDimMap(attrDims.颜色, colorIndex) as string[]
+  const colorNames = getFieldName(attrDims.颜色)
   const colorDim = attrDims.颜色[0]
 
   const sources: any[] = []

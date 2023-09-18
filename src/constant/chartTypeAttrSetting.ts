@@ -5,7 +5,44 @@ interface BaseAttrSetting {
   dimensionIds: string[]
 }
 
-const 颜色配置: BaseAttrSetting = {
+export interface I颜色配置 {
+  gradient: boolean
+  opacity: number
+  borderColor: string
+  overlayEffect: boolean
+  nonField: {
+    color: string
+  }
+  dimension: {
+    colors: string[]
+    auto: boolean
+    customize: boolean
+    colorMap: Record<string, string>
+  }
+  measure: {
+    name: string
+    gradientType: string
+    autoInterval: boolean
+    count: number
+    custom: {
+      min: number
+      max: number
+      ranges: number[]
+    }
+    colors: string[] | null
+  }
+  dimensionIds: string[]
+  gauge: {
+    pointColor: string
+    tickColor: string
+    tickSlotColor: string
+    hubColor: string
+    hubBackgroundColor: string
+    backgroundColor: string
+  }
+}
+
+const 颜色配置: I颜色配置 = {
   gradient: false,
   opacity: -1,
   borderColor: '',
