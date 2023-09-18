@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import zh from 'element-plus/lib/locale/lang/zh-cn'
-
 // const option = ref({
 //   xAxis: {
 //     type: 'category',
@@ -20,11 +18,13 @@ import zh from 'element-plus/lib/locale/lang/zh-cn'
 //     },
 //   ],
 // }) as Ref<EChartsOption>
+// @ts-expect-error nothing
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 </script>
 
 <template>
   <div h-screen w-screen>
-    <ElConfigProvider :locale="zh">
+    <ElConfigProvider :locale="zhCn">
       <RouterView />
     </ElConfigProvider>
   </div>
