@@ -1,13 +1,13 @@
 <script lang="ts" setup>
+import type { G2Spec } from '@antv/g2'
 import { Chart } from '@antv/g2'
-import type { G2ViewTree } from '@antv/g2/lib/runtime'
 
 const props = withDefaults(defineProps<{
   class?: string
   style?: string
   width?: string
   height?: string
-  option: G2ViewTree
+  option: G2Spec
 }>(), {
   width: '100%',
   height: '100%',
@@ -15,16 +15,9 @@ const props = withDefaults(defineProps<{
 const chartRef = ref<HTMLElement | null>(null)
 
 const option = computed(() => props.option)
+const isChartEmpty = computed(() => !option.value?.data?.value?.length)
 
 let chart: Chart
-// = new Chart({
-//   // container: chartRef.value!,
-//   // container: 'chart',
-//   type: 'view',
-//   theme: 'classic',
-//   autoFit: true,
-//   // theme: 'classic',
-// })
 
 onMounted(() => {
   chart = new Chart({
@@ -33,28 +26,18 @@ onMounted(() => {
     type: 'view',
     autoFit: true,
   })
-  // chart.render()
 })
 
-watchEffect(() => {
-  // TODO: 此处欠考虑，if里似乎监听不到，需在外部打印方得监听
-  console.log('watchEffect ~ option:', option.value)
-  if (chart) {
-    chart.clear()
-    chart.options(option.value)
-    chart.render()
-  }
-  // if (!chart)
-  //   return
-  // if (!option.value)
-  //   return chart.destroy()
+watch(option, () => {
+  chart.options(option.value)
+  chart.render()
 })
 </script>
 
 <template>
+  <slot v-if="isChartEmpty" />
   <div id="chart" ref="chartRef" of-scroll :style="{ width, height }" />
 </template>
 
 <style scoped>
-
 </style>

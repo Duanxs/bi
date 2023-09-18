@@ -11,6 +11,14 @@ const numberFields = computed(() => fields.value.filter(field => field.type === 
 // 中间图表信息区
 // const [isTableChecked] = useToggle(false)
 const currentChart = ref(tableType[0])
+const currentChartIcon = computed(() => {
+  let icon = currentChart.value.iconFileName
+  // 魔法打败魔法
+  if (/地图/.test(icon)) {
+    icon = icon.replace('.png', '.svg')
+  }
+  return `/src/assets/charts/background/${icon}`
+})
 
 const drag = useDragStore()
 
@@ -101,8 +109,19 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
           <div i-icon-park-outline-sort-two text-14px />
         </div>
       </div>
-      <div flex-1 max-w-full of-scroll>
-        <BaseChart :option="chartOption" />
+      <div flex-1 max-w-full of-y-hidden of-x-scroll>
+        <BaseChart :option="chartOption">
+          <ElEmpty h-full w-full :image="currentChartIcon">
+            <template #description>
+              <div text-gray>
+                拖入字段至该区域，将自动生成图表
+              </div>
+              <div text-gray>
+                (暂不支持快捷键Command、Shift多选拖入字段)
+              </div>
+            </template>
+          </ElEmpty>
+        </BaseChart>
       </div>
     </div>
   </div>
