@@ -14,9 +14,9 @@ const currentChart = ref(tableType[0])
 const currentChartIcon = computed(() => {
   let icon = currentChart.value.iconFileName
   // 魔法打败魔法
-  if (/地图/.test(icon)) {
+  if (/地图/.test(icon))
     icon = icon.replace('.png', '.svg')
-  }
+
   return `/src/assets/charts/background/${icon}`
 })
 

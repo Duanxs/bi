@@ -47,14 +47,14 @@ function genColorMap(
   const selectColors = unref(selectGroupColors)
   const gName = unref(groupName)
   const fieldCount = names.length
-  console.log('fieldCount:', fieldCount)
+  // console.log('fieldCount:', fieldCount)
   const colorCount = selectColors.length
-  console.log('colorCount:', colorCount)
+  // console.log('colorCount:', colorCount)
   const colorArr = Array.from<string[]>({ length: Math.ceil(fieldCount / colorCount) })
     .fill(selectColors.find(v => v.value === gName)?.colors || [])
     .flat()
     .slice(0, fieldCount)
-  console.log('colorArr:', colorArr)
+  // console.log('colorArr:', colorArr)
 
   return names.reduce((map, name, i) => {
     map[name] = colorArr[i]
@@ -65,7 +65,7 @@ function genColorMap(
 const colorMap = computed(() => {
   const { auto, customize, colors, colorMap } = 颜色.value.dimension
   if (auto) {
-    console.log('colorMap ~ 颜色.value.dimension:', 颜色.value.dimension)
+    // console.log('colorMap ~ 颜色.value.dimension:', 颜色.value.dimension)
     selectName.value = '自动'
     return genColorMap(fieldsNames, currentAutoName)
   }

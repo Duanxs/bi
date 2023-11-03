@@ -11,7 +11,8 @@ const activeTab = ref<'基础配置' | '组件样式'>('基础配置')
 const widgetStore = useWidgetStore()
 const yAxisAttrs = computed(() => [
   { name: '全部', id: 'entire' },
-  ...widgetStore.yAxisInfos])
+  ...widgetStore.yAxisInfos,
+])
 
 const isMultipleY = computed(() => widgetStore.isMultipleY)
 </script>

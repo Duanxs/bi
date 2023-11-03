@@ -23,12 +23,12 @@ onMounted(() => {
   chart = new Chart({
     container: chartRef.value!,
     theme: 'classic',
-    type: 'view',
     autoFit: true,
   })
 })
 
 watch(option, () => {
+  chart.clear()
   chart.options(option.value)
   chart.render()
 })

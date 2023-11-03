@@ -1,4 +1,4 @@
-import type { G2ViewTree, Node } from '@antv/g2/lib/runtime'
+import type { FacetRectComposition, G2Spec } from '@antv/g2'
 import type { DimensionValue } from './types'
 import { chartAttrMap } from '@/constant/chartTypeAttr'
 import { tableData } from '@/constant/data'
@@ -87,14 +87,16 @@ export function getChartAttrById(id: string) {
   return field as unknown as DimensionValue
 }
 
-export function genChartOptions(): G2ViewTree {
+export function genChartOptions(): G2Spec {
   const widgetStore = useWidgetStore()
   const xDims = widgetStore.getDimensionsFromAxis(AXIS_TYPES.x)
+  const xCount = xDims.length
   // console.log('==aaagenChartOptions ~ xDims:', xDims)
   const yDims = widgetStore.getDimensionsFromAxis(AXIS_TYPES.y)
+  const yCount = yDims.length
 
   const colorDims = widgetStore.getDimensionsFromChartAttr('entire', CHART_ATTRS.颜色)
-  const color = widgetStore.getAttr('entire', CHART_ATTRS.颜色) as I颜色配置
+  // const color = widgetStore.getAttr('entire', CHART_ATTRS.颜色) as I颜色配置
 
   const { data } = calcTableData(xDims, yDims, {
     颜色: colorDims,
@@ -113,185 +115,175 @@ export function genChartOptions(): G2ViewTree {
     起点: [],
     终点: [],
   })
+  // console.log('genChartOptions ~ xData:', xData)
 
-  const options: G2ViewTree & { children: Node[] } = {
-    theme: 'classic',
-    type: 'view',
-    // autoFit: true,
+  let options: G2Spec = {
+    type: 'interval',
+    autoFit: true,
     data: {
       type: 'inline',
       value: data || [],
     },
-    children: [],
+    // scrollbar: {
+    //   x: {},
+    // },
   }
 
-  const xCount = xDims.length
-  const yCount = yDims.length
-
-  if (xCount === 0) {
-    // TODO: x = 0， y = 0 时，对应渲染逻辑
-  }
-  else if (xCount === 1) {
-    if (yCount === 1) {
-      const xName = xDims[0].name
-      const yName = yDims[0].name
-      const colorName = colorDims[0]?.name
-      return {
-        theme: 'classic',
-        type: 'interval',
-        // autoFit: true,
-        data: {
-          type: 'inline',
-          value: data || [],
-        },
-        encode: {
-          x: xName,
-          y: yName,
-          color: colorName || (() => ''),
-        },
-        tooltip: [xName, yName],
-        style: {
-          maxWidth: 50,
-        },
-        // FIXME: 值过大时，疑似无法渲染
-        scale: {
-          color: {
-            type: 'ordinal',
-            range: color.dimension.colors,
-            // range: ['#7593ed', '#95e3b0'],
-          },
-          y: {
-            type: 'linear',
-            nice: true,
-            // domain: [0, 7000],
-          },
-        },
-      }
-    }
-    else if (yCount > 1) {
-      const children: Node[] = []
-      yDims.forEach((yDim) => {
-        children.push({
-          type: 'interval',
-          encode: {
-            x: xDims[0].name,
-            y: yDim.name,
-            series: () => yDim.name,
-            color: colorDims[0]?.name || (() => ''),
-          },
-          scale: {
-            y: {
-              key: 'left-y',
-              type: 'linear',
-              // domain: [0, 7000],
-            },
-          },
-          tooltip: [...xDims.map(dim => dim.name), yDim.name, colorDims[0]?.name || ''],
-          style: {
-            maxWidth: 50,
-          },
-        })
-      })
-      return {
-        theme: 'classic',
-        type: 'view',
-        // autoFit: true,
-        data: {
-          type: 'inline',
-          value: data || [],
-        },
-        children,
-      }
-    }
-  }
-  else if (xCount > 1) {
-    // FIXME: x多于两个时，会渲染多个y，且值域不同
-    const children = genOption(xDims.slice(1), yDims, { colorDims })
-    const options: G2ViewTree = {
-      theme: 'classic',
-      // autoFit: true,
-      type: 'facetRect',
+  if (xCount === 1 && yCount === 1) {
+    options = {
+      type: 'interval',
       data: {
         type: 'inline',
-        value: data || [],
+        value: tData,
       },
-      // theme: 'classic',
-      // paddingLeft: 100,
-      // width: 1500,
-      encode: { x: xDims[0]?.name || '' },
-      axis: { x: { position: 'bottom', tick: false } },
-      children,
+      transform: [{ type: 'groupX', y: 'sum' }],
+      encode: { x: xDims[0].name, y: yDims[0].name },
+      scale: { y: { nice: true } },
+      style: {
+        maxWidth: 52,
+        minWidth: 16,
+      },
     }
-    return options
   }
+  else if (xCount > 1 && yCount === 1) {
+    (options as FacetRectComposition).type = 'facetRect'
 
-  console.log('genChartOptions ~ options:', options)
-  return options
-}
+    ;(options as FacetRectComposition).encode = {
+      x: xDims[0].name!,
+    }
+    options.axis = {
+      x: { position: 'bottom', tick: false, title: true },
+    }
+    options.scale = {
+      x: {
+        type: 'band',
+        paddingInner: 0,
+        paddingOuter: 0,
+      },
+    }
 
-function genOption(
-  dims: DimensionValue[],
-  yDims: DimensionValue[],
-  attr: any,
-  result: any[] = [],
-): Node[] {
-  if (dims.length === 1) {
-    const children: Node[] = []
-    for (const yDim of yDims) {
+    options.paddingLeft = 80
+
+    function genChildren(children: any[] = [], i = 1, isFirst = true) {
+      if (i === xCount - 1) {
+        return [{
+          type: 'interval',
+          frame: false,
+          axis: {
+            x: { position: 'bottom', title: false, tick: false, labelTransform: 'rotate(45deg)' },
+            y: isFirst,
+          },
+          paddingBottom: 40,
+          autoFit: true,
+          encode: {
+            x: xDims[i].name,
+            y: yDims[0].name,
+          },
+          scale: {
+            x: {
+              type: 'band',
+              paddingInner: 0.2,
+              paddingOuter: 0.1,
+            },
+            y: {
+              type: 'linear',
+              domain: [0, 4000000],
+              nice: true,
+              key: 'line',
+              clamp: true,
+            },
+          },
+          style: {
+            // maxWidth: 52,
+            width: 16,
+            // insetRight: 0,
+            // insetLeft: 0,
+          },
+        }]
+      }
       children.push({
-        type: 'interval',
-        frame: false,
-        paddingBottom: 60,
+        type: 'facetRect',
         encode: {
-          x: dims[0]?.name || '',
-          y: yDim.name || '',
-          series: () => (yDim.name || ''),
-          color: attr.colorDims[0]?.name || (() => ''),
+          x: xDims[i].name,
         },
         scale: {
-          y: {
-            key: 'left-y',
-            type: 'linear',
-          // domain: [0, 7000],
-          },
-        },
-        axis: {
           x: {
-            position: 'bottom',
-            title: false,
-            labelAutoRotate: true,
-            labelAutoHide: true,
-            transform: true,
-          },
-          y: {
-            title: false,
+            type: 'band',
+            paddingInner: 0,
+            paddingOuter: 0,
           },
         },
-      // tooltip: [...dims.map(dim => dim.name), ...yDims.map(dim => dim.name)],
-      // style: {
-      //   maxWidth: 50,
-      // },
+        axis: { x: { position: 'bottom', title: false, tick: false } },
+        paddingBottom: 20,
+        children: genChildren(children, i + 1, false),
+        // shareSize: true,
       })
+
+      return children
     }
-    return [{
-      type: 'view',
-      frame: false,
-      children,
-    }]
+    options.children = genChildren()
+
+    if (xCount > 2) {
+      const width = data.length * 16 * 2 + 20
+
+      options = {
+        type: 'spaceLayer',
+        width,
+        data: {
+          type: 'inline',
+          value: data || [],
+        },
+        padding: [50, 50, 50, 50],
+        children: [
+          {
+            // marginLeft: 124,
+            ...options,
+            // scale: {
+            //   x: {
+            //     type: 'band',
+            //     paddingInner: 0,
+            //     paddingOuter: 0,
+            //   },
+            // },
+          },
+
+          {
+            type: 'axisY',
+            x: 0,
+            y: 0,
+            title: yDims[0].name,
+            tickCount: 5,
+            scale: {
+              y: {
+                type: 'linear',
+                // independent: true,
+                range: [1, 0],
+                domain: [0, 4000000],
+              },
+            },
+          },
+        ],
+      }
+    }
+    // options.children.push({
+    //   type: 'axisY',
+    //   // axis: {
+    //   //   y: { position: 'left', title: true, tick: true },
+    //   // },
+    //   encode: {
+    //     y: { type: 'column', value: [0, 1000000, 2000000, 3000000, 4000000] },
+    //   },
+    //   position: 'left',
+    //   scale: {
+    //     y: {
+    //       type: 'linear',
+    //       // independent: true,
+    //       domain: [0, 4000000],
+    //     },
+    //   },
+    // })
   }
-  const children = genOption(dims.slice(1), yDims, attr, result[0]?.children || [])
-  result.push({
-    type: 'facetRect',
-    encode: { x: dims[0]?.name || '' },
-    paddingBottom: 20,
-    axis: {
-      x: { position: 'bottom', title: false, tick: false },
-      y: { title: false },
-    },
-    scale: {
-      x: { padding: 0, paddingInner: 0, paddingOuter: 0 },
-    },
-    children: Array.isArray(children) ? children : [children],
-  })
-  return result
+
+  // console.log('genChartOptions ~ options:', options)
+  return options
 }

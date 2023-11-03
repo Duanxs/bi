@@ -19,19 +19,23 @@ export function calcTableData(
   yDims: DimensionValue[],
   attrDims: Record<I图表属性名, DimensionValue[]>,
 ) {
-  if (!xDims.length || !yDims.length)
+  const xCount = xDims.length
+  const yCount = yDims.length
+  if (!xCount && !yCount) {
     return {
       sources: [],
       xData: [],
       dimensions: [],
     }
+  }
+
   // TODO:
   // 默认x只可以拖维度，y只拖指标，后期再调整为自由拖
   const colorNames = getFieldName(attrDims.颜色)
   const colorDim = attrDims.颜色[0]
 
   const sources: any[] = []
-  const xData: string[][] = []
+  let xData: string[][] = []
   const dimensions: string[] = []
 
   const colorLength = colorNames?.length
@@ -50,6 +54,7 @@ export function calcTableData(
   for (const yDim of yDims) {
     const combineDims = colorDim ? [...xDims, colorDim] : xDims
     const res = calcData(combineDims, yDim)
+    xData = res.xData
     sources.push(res.source)
   }
 
@@ -57,9 +62,8 @@ export function calcTableData(
   for (let i = 1; i < yDims.length; i++) {
     for (let j = 0; j < sources[0].length; j++) {
       const key = yDims[i]?.name || ''
-      if (key) {
+      if (key)
         data[j][key] = sources[i][j][key]
-      }
     }
   }
   // xData = res.xData

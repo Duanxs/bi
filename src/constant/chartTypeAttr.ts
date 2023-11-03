@@ -128,9 +128,9 @@ type EmptyChartAttr = Record<CHART_ATTRS, typeof 图表属性配置[keyof typeof
 export function getChartAttrSetting() {
   const setting = {} as EmptyChartAttr
   图表属性名.forEach((attr) => {
-    if (!chartAttr[attr]) {
+    if (!chartAttr[attr])
       console.warn(`chartAttr[${attr}] is not defined`)
-    }
+
     setting[attr] = JSON.parse(JSON.stringify(chartAttr[attr].setting))
   })
   return setting

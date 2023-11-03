@@ -469,9 +469,8 @@ export const useWidgetStore = defineStore('widget', () => {
         const otherY = _getOtherY(yAxisInfos.value)
         // 清空分量
         otherY.forEach((yAxis) => {
-          if (_checkChartAttrOfY(attr, yAxis.id!)) {
+          if (_checkChartAttrOfY(attr, yAxis.id!))
             _clearChartAttrOfY(attr, yAxis.id!)
-          }
         })
         // 复加之
         const needAddIds = _getAttrDimensionIds('entire', attr)

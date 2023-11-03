@@ -80,7 +80,7 @@ export interface Widget {
       enableWheelTitle: '开启滚轮缩放'
       disableWheelTitle: '关闭滚轮缩放'
     }
-    chartAttr: {}
+    chartAttr: Record<any, any>
     chartStyle: {
       legend: {
         enabled: true
@@ -140,7 +140,7 @@ export interface Widget {
           color: ''
         }
       }
-      filterValue: {}
+      filterValue: Record<any, any>
     }
     tableStyle: {
       form: 1
@@ -196,29 +196,29 @@ export interface Widget {
       }
     }
     transmitLinkages: true
-    chartInitState: {}
+    chartInitState: Record<any, any>
   }
   view: Record<Axis, string[]>
   viewAttr: {
     10000: {
       type: number
-      left: {}
-      right: {}
+      left: Record<any, any>
+      right: Record<any, any>
     }
     20000: {
       type: number
     }
     30000: {
       type: number
-      left: {}
-      right: {}
+      left: Record<any, any>
+      right: Record<any, any>
     }
   }
   dimensions: Dimension
   allData: boolean
   drillOrder: any[]
   resultFilter: any[]
-  dimensionGroups: {}
+  dimensionGroups: Record<any, any>
   legendFilter: null
   columnSize: []
   regionColumnSize: []

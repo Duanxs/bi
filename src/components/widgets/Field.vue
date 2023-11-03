@@ -17,12 +17,11 @@ const props = withDefaults(defineProps<{
 const emits = defineEmits(['start', 'end'])
 
 const bgColor = computed(() => {
-  if (props.type === COLUMN.NUMBER) {
+  if (props.type === COLUMN.NUMBER)
     return '#afdfda'
-  }
-  else {
+
+  else
     return '#afc6e8'
-  }
 })
 
 const drag = useDragStore()
