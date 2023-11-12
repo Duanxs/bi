@@ -2,6 +2,10 @@
 import { tableData } from '@/constant/data'
 import { tableType } from '@/constant/chartType'
 
+defineOptions({
+  name: 'Editor',
+})
+
 // 左侧字段展示区
 const tableTitle = ref('空调零售明细表')
 const fields = ref(tableData.fields)
@@ -30,7 +34,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
 </script>
 
 <template>
-  <div flex text-12px w-full h-full>
+  <div flex text-12px w-full>
     <div class="widget-table-data" b-r w-245px p-16px>
       <div class="data-header">
         header
@@ -109,7 +113,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
           <div i-icon-park-outline-sort-two text-14px />
         </div>
       </div>
-      <div flex-1 max-w-full of-y-hidden of-x-scroll>
+      <div flex-1 max-w-full min-h-1px of-y-hidden of-x-scroll>
         <BaseChart :option="chartOption">
           <ElEmpty h-full w-full :image="currentChartIcon">
             <template #description>

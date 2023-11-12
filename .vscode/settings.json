@@ -5,6 +5,9 @@
     "source.fixAll.eslint": true,
     "source.organizeImports": "never"
   },
+  "css.customData": [
+    ".vscode/unocss.json"
+  ],
   // Silent the stylistic rules in you IDE, but still auto fix them
   "eslint.experimental.useFlatConfig": true,
   "eslint.rules.customizations": [

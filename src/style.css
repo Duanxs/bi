@@ -1,0 +1,9 @@
+:root {
+  font-size: 12px;
+  --el-font-size-extra-large: 28px !important;
+  --el-font-size-large: 16px !important;
+  --el-font-size-medium: 14px !important;
+  --el-font-size-base: 12px !important;
+  --el-font-size-small: 11px !important;
+  --el-font-size-extra-small: 10px !important;
+}
