@@ -18,41 +18,44 @@ const isMultipleY = computed(() => widgetStore.isMultipleY)
 </script>
 
 <template>
-  <div class="chart-prop-tabs">
-    <ElTabs v-model="activeTab" stretch>
-      <ElTabPane label="图形属性" name="基础配置">
-        <template v-if="!isMultipleY">
+  <ElTabs v-model="activeTab" stretch>
+    <ElTabPane class="chart-props" label="图形属性" name="基础配置">
+      <template v-if="!isMultipleY">
+        <ChartSettingPropItem
+          v-for="item in chart.attrs"
+          :key="item.label"
+          :dragging="dragging"
+          :attrs="item"
+          y="entire"
+        />
+      </template>
+      <template v-for="(y, index) in yAxisAttrs" v-else :key="y.id">
+        <FieldExpand :name="y.name!" :expand="index === 0">
           <ChartSettingPropItem
             v-for="item in chart.attrs"
             :key="item.label"
             :dragging="dragging"
             :attrs="item"
-            y="entire"
+            :y="y.id!"
           />
-        </template>
-        <template v-for="(y, index) in yAxisAttrs" v-else :key="y.id">
-          <FieldExpand :name="y.name!" :expand="index === 0">
-            <ChartSettingPropItem
-              v-for="item in chart.attrs"
-              :key="item.label"
-              :dragging="dragging"
-              :attrs="item"
-              :y="y.id!"
-            />
-          </FieldExpand>
-        </template>
-      </ElTabPane>
-      <ElTabPane label="组件样式" name="组件样式">
-        <ChartSettingStyle />
-      </ElTabPane>
-    </ElTabs>
-  </div>
+        </FieldExpand>
+      </template>
+    </ElTabPane>
+    <ElTabPane label="组件样式" name="组件样式">
+      <ChartSettingStyle />
+    </ElTabPane>
+  </ElTabs>
 </template>
 
 <style scoped>
-.chart-prop-tabs :deep(.el-tabs__item) {
+:deep(.el-tabs__item) {
   padding: 0 ;
   font-weight: normal ;
   font-size: 12px ;
+}
+.chart-props {
+  max-height: calc(100vh - 75px - 40px - 210px - 55px - 32px);
+  min-height: 10px;
+  overflow: scroll;
 }
 </style>

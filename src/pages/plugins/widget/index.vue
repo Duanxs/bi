@@ -54,18 +54,14 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
         </div>
       </FieldExpand>
     </div>
-    <div class="widget-chart-info" grid="~ rows-[220px_1fr_100px]" b-r w-245px py-16px>
-      <div class="chart-type">
-        <ChartTypeList v-model:chart="currentChart" :list="tableType" />
-      </div>
-      <div class="chart-setting" flex-1 of-auto px-16px>
-        <ChartSettingTabs :dragging="drag.isDragging" :chart="currentChart" />
-      </div>
+    <div class="widget-chart-info" grid="~ rows-[min-content_1fr_min-content]" of-scroll b-r w-245px p-16px>
+      <ChartTypeList v-model:chart="currentChart" :list="tableType" />
+      <ChartSettingTabs :dragging="drag.isDragging" :chart="currentChart" />
       <div class="result-filter" px-16px>
         结果过滤
       </div>
     </div>
-    <div class="widget-chart" flex-1 p-16px flex flex-col max-w-full of-scroll>
+    <div class="widget-chart" grid="~ rows-[min-content_1fr]" p-16px max-w-full of-scroll>
       <div relative>
         <div class="x-axis">
           <FieldDragBox
@@ -113,7 +109,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
           <div i-icon-park-outline-sort-two text-14px />
         </div>
       </div>
-      <div flex-1 max-w-full min-h-1px of-y-hidden of-x-scroll>
+      <div max-w-full min-h-1px of-y-hidden of-x-scroll>
         <BaseChart :option="chartOption">
           <ElEmpty h-full w-full :image="currentChartIcon">
             <template #description>

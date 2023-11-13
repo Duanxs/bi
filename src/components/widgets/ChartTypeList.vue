@@ -29,20 +29,19 @@ function getRequiredInfo() {
 
 <template>
   <div>
-    <div h-36px px-16px>
+    <div h-36px>
       图表类型
     </div>
-    <div class="item-list" px-4px flex flex-wrap h-200px overflow-scroll>
+    <div class="item-list" grid="~ cols-5" mr--16px h-150px of-scroll>
       <template v-for="(item, index) in chartList" :key="item.value">
         <ChartTypeItem
           :checked="item.checked"
-          mx-7px mb-8px
           :icon="item.iconFileName"
           @click="onTypeClick(item, index)"
         />
       </template>
     </div>
-    <div class="item-description" px-16px op-50>
+    <div class="item-description" mt-2 op-50>
       <div>
         {{ currentChart?.text }}
       </div>
