@@ -44,8 +44,6 @@ function onDrop(e: DragEvent) {
     saveKey = ''
     return
   }
-  e.preventDefault()
-  e.stopPropagation()
   const id = e.dataTransfer?.getData('text/plain')
   if (!id || (props.unique && idSet.has(id)))
     return
@@ -62,11 +60,17 @@ function onDrop(e: DragEvent) {
   emits('add', field)
 }
 
+const body = document.querySelector('body')
+body?.addEventListener('dragover', (e) => {
+  e.preventDefault()
+})
+
 function onFieldDragStart(_e: DragEvent) {
   saveKey = props.name
 }
 function onFieldDragEnd(_e: DragEvent, id: string, index: number) {
   if (isOutside.value) {
+    saveKey = ''
     // currentFields.value.splice(index, 1)
     props.unique && idSet.delete(id)
     emits('del', index)
@@ -84,7 +88,7 @@ function onFieldDragEnd(_e: DragEvent, id: string, index: number) {
     border="~ transparent"
     :style="{ gap: `${gap}px` }"
     @dragover.prevent
-    @drop="onDrop"
+    @drop.prevent="onDrop"
   >
     <div
       flex items-center
