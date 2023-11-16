@@ -1,69 +1,51 @@
 <script lang="ts" setup>
 import type { ITabItem } from '@/components/tabs/tabs.type'
 import type { IPlugins } from '@/config/addon'
+import addons from '@/config/addon'
 
 // const router = useRouter()
 
-const tabs: ITabItem[] = [
+const tabs = ref< ITabItem[]>([
   {
     name: 'jfksjlfjsd',
     title: '组件',
     type: 'widget',
-    icon: 'icon-park-outline-abnormal',
-  },
-  {
-    name: 'iouerioewur',
-    title: '组件2',
-    type: 'widget',
-    icon: 'icon-park-outline-abnormal',
+    icon: 'tabler:cube',
   },
   {
     name: 'ioudddrioewur',
     title: '组件3',
     type: 'report',
-    icon: 'icon-park-outline-abnormal',
+    icon: 'heroicons:squares-2x2',
   },
   {
     name: 'iouertttoewur',
     title: '组件4',
     type: 'doc',
-    icon: 'icon-park-outline-abnormal',
+    icon: 'majesticons:textbox-line',
   },
-]
-const addGroup: IPlugins[] = [
-  {
-    id: 'widget',
-    title: '添加组件',
-    icon: 'tabler:cube-plus',
-    component: null,
-    api: {},
-  },
-  {
-    id: 'report',
-    title: '添加仪表盘',
-    icon: 'heroicons:squares-plus',
-    component: null,
-    api: {},
-  },
-  {
-    id: 'doc',
-    title: '添加分析文档',
-    icon: 'majesticons:textbox-plus-line',
-    component: null,
-    api: {},
-  },
-]
-const activeTab = ref<ITabItem>(tabs[1])
+])
+const addGroup = addons.plugins
+const activeTab = ref<ITabItem>(tabs.value[1])
 
 const router = useRouter()
 watchEffect(() => {
   router.push({ name: activeTab.value.type, query: { activeTab: activeTab.value.name } })
 })
+
+function onTabAdd(item: IPlugins) {
+  tabs.value.push({
+    name: genId(),
+    title: item.title,
+    type: item.id,
+    icon: item.icon,
+  })
+}
 </script>
 
 <template>
   <div bg-hex-eef1f6 pb-8px>
-    <Tabs v-model="activeTab" :tabs="tabs" :add-group="addGroup" />
+    <Tabs v-model="activeTab" :tabs="tabs" :add-group="addGroup" @add="onTabAdd" />
   </div>
 </template>
 
