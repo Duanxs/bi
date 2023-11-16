@@ -109,7 +109,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
           <div i-icon-park-outline-sort-two text-14px />
         </div>
       </div>
-      <div max-w-full min-h-1px of-y-hidden of-x-scroll>
+      <div class="chart" max-w-full min-h-1px of-y-hidden of-x-scroll>
         <BaseChart :option="chartOption">
           <ElEmpty h-full w-full :image="currentChartIcon">
             <template #description>
@@ -128,5 +128,7 @@ const fieldsY = computed(() => getDimensionsFromAxis(AXIS_TYPES.y))
 </template>
 
 <style scoped>
-
+.chart {
+  max-height: calc(100vh - 108px - 32px - 40px - 35px - 40px);
+}
 </style>
