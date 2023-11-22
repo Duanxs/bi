@@ -26,7 +26,7 @@ const tabs = ref< ITabItem[]>([
   },
 ])
 const addGroup = addons.plugins
-const activeTab = ref<ITabItem>(tabs.value[1])
+const activeTab = useStorage('edit-active-tab', tabs.value[1])
 
 const router = useRouter()
 watchEffect(() => {
@@ -40,6 +40,7 @@ function onTabAdd(item: IPlugins) {
     type: item.id,
     icon: item.icon,
   })
+  activeTab.value = tabs.value.at(-1)!
 }
 </script>
 
