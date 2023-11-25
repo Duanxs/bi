@@ -16924,6 +16924,8 @@ export const tableData = {
   },
 }
 
+export const tFields = tableData.fields.map(v => v.name)
+
 export const tData = [
   {
     时间: '2018-01-01 00:00:00',

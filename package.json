@@ -11,11 +11,16 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@antv/g": "^5.18.21",
+    "@antv/g-base": "^0.4.7",
     "@antv/g2": "^5.1.6",
+    "@antv/s2": "^1.52.0",
+    "@antv/s2-vue": "^1.5.0",
     "@element-plus/icons-vue": "^2.1.0",
     "@icon-park/vue-next": "^1.4.2",
     "@unocss/reset": "^0.51.13",
     "@vueuse/core": "^10.5.0",
+    "ant-design-vue": "^3.2.20",
     "echarts": "^5.4.3",
     "element-plus": "^2.4.1",
     "pinia": "^2.1.7",

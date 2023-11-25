@@ -60,5 +60,6 @@
     "json",
     "jsonc",
     "yaml"
-  ]
+  ],
+  "vue.codeActions.enabled": false
 }

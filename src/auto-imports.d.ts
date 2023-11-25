@@ -116,6 +116,7 @@ declare global {
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
   const tData: typeof import('./constant/data')['tData']
+  const tFields: typeof import('./constant/data')['tFields']
   const tableData: typeof import('./constant/data')['tableData']
   const tableType: typeof import('./constant/chartType')['tableType']
   const tableTypeCombe: typeof import('./constant/chartType')['tableTypeCombe']
@@ -455,6 +456,7 @@ declare module 'vue' {
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
     readonly tData: UnwrapRef<typeof import('./constant/data')['tData']>
+    readonly tFields: UnwrapRef<typeof import('./constant/data')['tFields']>
     readonly tableData: UnwrapRef<typeof import('./constant/data')['tableData']>
     readonly tableType: UnwrapRef<typeof import('./constant/chartType')['tableType']>
     readonly tableTypeCombe: UnwrapRef<typeof import('./constant/chartType')['tableTypeCombe']>
@@ -774,6 +776,7 @@ declare module '@vue/runtime-core' {
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
     readonly tData: UnwrapRef<typeof import('./constant/data')['tData']>
+    readonly tFields: UnwrapRef<typeof import('./constant/data')['tFields']>
     readonly tableData: UnwrapRef<typeof import('./constant/data')['tableData']>
     readonly tableType: UnwrapRef<typeof import('./constant/chartType')['tableType']>
     readonly tableTypeCombe: UnwrapRef<typeof import('./constant/chartType')['tableTypeCombe']>

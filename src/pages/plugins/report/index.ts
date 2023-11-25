@@ -5,6 +5,7 @@ export default {
   title: '仪表盘',
   icon: 'heroicons:squares-2x2',
   addIcon: 'heroicons:squares-plus',
+  editable: true,
   component: () => import('./index.vue'),
   api: {},
 } as unknown as IPlugins

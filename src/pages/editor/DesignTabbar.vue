@@ -2,31 +2,20 @@
 import type { ITabItem } from '@/components/tabs/tabs.type'
 import type { IPlugins } from '@/config/addon'
 import addons from '@/config/addon'
+import Table from '@/pages/plugins/table/index'
 
-// const router = useRouter()
-
-const tabs = ref< ITabItem[]>([
+const tabs = useStorage<ITabItem[]>('edit-tabs', [
   {
-    name: 'jfksjlfjsd',
-    title: '组件',
-    type: 'widget',
-    icon: 'tabler:cube',
-  },
-  {
-    name: 'ioudddrioewur',
-    title: '组件3',
-    type: 'report',
-    icon: 'heroicons:squares-2x2',
-  },
-  {
-    name: 'iouertttoewur',
-    title: '组件4',
-    type: 'doc',
-    icon: 'majesticons:textbox-line',
+    name: genId(),
+    title: Table.title,
+    type: Table.id,
+    icon: Table.icon,
+    editable: Table.editable,
   },
 ])
-const addGroup = addons.plugins
-const activeTab = useStorage('edit-active-tab', tabs.value[1])
+
+const addGroup = addons.plugins.filter(v => v.editable)
+const activeTab = useStorage('edit-active-tab', tabs.value[0])
 
 const router = useRouter()
 watchEffect(() => {

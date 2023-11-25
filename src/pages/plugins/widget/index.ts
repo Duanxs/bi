@@ -5,6 +5,7 @@ export default {
   title: '组件',
   icon: 'tabler:cube',
   addIcon: 'tabler:cube-plus',
+  editable: true,
   component: () => import('./index.vue'),
   api: {},
 } as unknown as IPlugins
