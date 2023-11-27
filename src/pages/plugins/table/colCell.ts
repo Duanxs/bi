@@ -70,10 +70,7 @@ export class CustomTableColCell extends TableColCell {
     iconBg.on('click', () => {
       this.onIconClick?.({
         meta: this.meta,
-        filterRelativePos: {
-          x: this.calcFilterRelativeX(),
-          y: this.meta.height
-        }
+        filterRelativePos: this.calcFilterRelativeX()
       })
     })
   }
@@ -94,17 +91,18 @@ export class CustomTableColCell extends TableColCell {
     icon.on('click', () => {
       this.onIconClick?.({
         meta: this.meta,
-        filterRelativePos: {
-          x: this.calcFilterRelativeX(),
-          y: this.meta.height
-        }
+        filterRelativePos: this.calcFilterRelativeX()
       })
     })
   }
 
   calcFilterRelativeX() {
     const iconBg = this.find(item => item.cfg.name === 'iconBg')
-    return iconBg.getBBox().x
+    const box = iconBg.getBBox()
+    return {
+      x: box.x,
+      y: box.y + box.height
+    }
   }
 }
 

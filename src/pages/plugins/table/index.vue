@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { S2DataConfig, S2Options, Node } from '@antv/s2'
+import type { Node, S2DataConfig, S2Options } from '@antv/s2'
 import { SheetComponent } from '@antv/s2-vue'
 import Tab from './TableTab.vue'
-import { tData, tFields } from '@/constant/data'
 import '@antv/s2-vue/dist/style.min.css'
 import { CustomTableColCell } from './colCell'
 import Filter from './Filter.vue'
+import { tData, tFields } from '@/constant/data'
 
 const sheetContainerRef = ref(null)
 const s2 = ref(null)
@@ -15,10 +15,8 @@ const dataCfg = shallowRef<S2DataConfig>({
     columns: tFields,
   },
   meta: [],
-  data: tData,
+  data: tData.slice(0, 20),
 })
-
-
 
 // class IconHoverInteraction extends BaseEvent {
 //   bindEvents() {
@@ -40,6 +38,7 @@ const isFilterShow = ref(false)
 const filterX = ref(0)
 const filterY = ref(0)
 const filterContent = ref('')
+const filterMeta = ref<Node>()
 
 const { width, height, left, top } = useElementBounding(sheetContainerRef)
 
@@ -48,17 +47,18 @@ const options: S2Options = reactive({
   tooltip: {
     col: {
       showTooltip: false,
-    }
+    },
   },
   colCell: (item, spreadsheet, headerConfig) => {
     return new CustomTableColCell(
       item,
       spreadsheet,
       headerConfig,
-      ({ meta, filterRelativePos }: any) => {
+      ({ meta, filterRelativePos }: { meta: Node; filterRelativePos: { x: number; y: number } }) => {
         filterX.value = left.value + filterRelativePos.x
         filterY.value = top.value + filterRelativePos.y
         filterContent.value = meta.field
+        filterMeta.value = meta
         isFilterShow.value = true
       },
     )
@@ -69,8 +69,8 @@ const options: S2Options = reactive({
         const field = colNode.field
         const data = colNode.spreadsheet.dataSet.originData[0][field]
         return data.length > 10 ? 150 : 120
-      }
-    }
+      },
+    },
   },
   // interaction: {
   //   customInteractions: [
@@ -93,7 +93,7 @@ watchEffect(() => {
     <Tab />
     <div ref="sheetContainerRef" class="content" flex-1 flex of-hidden m-5 relative>
       <SheetComponent ref="s2" sheet-type="table" :data-cfg="dataCfg" :options="options" />
-      <Filter v-model="isFilterShow" :content="filterContent" :top="filterY" :left="filterX" />
+      <Filter v-model="isFilterShow" :meta="filterMeta!" :content="filterContent" :top="filterY" :left="filterX" />
     </div>
   </div>
 </template>

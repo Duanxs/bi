@@ -42,6 +42,7 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
   const extendRef: typeof import('@vueuse/core')['extendRef']
+  const fieldSort: typeof import('./constant/data')['fieldSort']
   const genChartOptions: typeof import('./composables/useWeiget')['genChartOptions']
   const genDimension: typeof import('./composables/useChartOptions')['genDimension']
   const genDimensionByAnother: typeof import('./composables/useChartOptions')['genDimensionByAnother']
@@ -52,6 +53,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getFieldName: typeof import('./shared/table')['getFieldName']
+  const getFieldType: typeof import('./constant/data')['getFieldType']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
@@ -382,6 +384,7 @@ declare module 'vue' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly fieldSort: UnwrapRef<typeof import('./constant/data')['fieldSort']>
     readonly genChartOptions: UnwrapRef<typeof import('./composables/useWeiget')['genChartOptions']>
     readonly genDimension: UnwrapRef<typeof import('./composables/useChartOptions')['genDimension']>
     readonly genDimensionByAnother: UnwrapRef<typeof import('./composables/useChartOptions')['genDimensionByAnother']>
@@ -392,6 +395,7 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getFieldName: UnwrapRef<typeof import('./shared/table')['getFieldName']>
+    readonly getFieldType: UnwrapRef<typeof import('./constant/data')['getFieldType']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -702,6 +706,7 @@ declare module '@vue/runtime-core' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly fieldSort: UnwrapRef<typeof import('./constant/data')['fieldSort']>
     readonly genChartOptions: UnwrapRef<typeof import('./composables/useWeiget')['genChartOptions']>
     readonly genDimension: UnwrapRef<typeof import('./composables/useChartOptions')['genDimension']>
     readonly genDimensionByAnother: UnwrapRef<typeof import('./composables/useChartOptions')['genDimensionByAnother']>
@@ -712,6 +717,7 @@ declare module '@vue/runtime-core' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getFieldName: UnwrapRef<typeof import('./shared/table')['getFieldName']>
+    readonly getFieldType: UnwrapRef<typeof import('./constant/data')['getFieldType']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>

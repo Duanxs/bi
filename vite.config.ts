@@ -17,7 +17,11 @@ export default defineConfig({
     },
   },
   plugins: [
-    vue(),
+    vue({
+      script: {
+        defineModel: true,
+      },
+    }),
     Unocss(),
     Inspect(),
     AutoImport({

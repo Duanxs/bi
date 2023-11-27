@@ -16926,6 +16926,36 @@ export const tableData = {
 
 export const tFields = tableData.fields.map(v => v.name)
 
+export const getFieldType = (field: string) => tableData.fields.find(v => v.name === field)?.type || 16
+
+const sortFnMap: Record<number, Function> = {
+  /** 字符串 */
+  16: (a: string, b: string) => a.localeCompare(b),
+  /** 数字 */
+  32: (a: string, b: string) => {
+    function replaceComma(str: string) {
+      return str.replaceAll(',', '')
+    }
+    return Number(replaceComma(a)) - Number(replaceComma(b))
+  },
+  /** 时间 */
+  48: (a: string, b: string) => {
+    return new Date(a).getTime() - new Date(b).getTime()
+  },
+}
+
+export function fieldSort(data: any, field: string, sortType: string) {
+  const fieldType = getFieldType(field)
+  return data.sort((a: any, b: any) => {
+    a = a[field].toString()
+    b = b[field].toString()
+    if (sortType.toLowerCase() === 'asc')
+      return sortFnMap[fieldType](a, b)
+    else
+      return sortFnMap[fieldType](b, a)
+  })
+}
+
 export const tData = [
   {
     时间: '2018-01-01 00:00:00',
